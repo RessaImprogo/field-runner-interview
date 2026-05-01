@@ -4,400 +4,583 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Field Assistant Runner — Interview Script</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#F7F4EE;--surface:#FFFFFF;--surface2:#F0EDE6;--ink:#1A1916;--ink2:#5A564E;--ink3:#9A958A;--accent:#C4531A;--accent2:#E8794A;--green:#2A6B4A;--green-bg:#EAF4EE;--amber:#A06010;--amber-bg:#FEF3E2;--red:#8B2020;--red-bg:#FDEAEA;--purple:#5B3B9E;--purple-bg:#F0ECFC;--border:#E2DDD4}
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.6}
-  .app{display:grid;grid-template-columns:272px 1fr;min-height:100vh}
-  .sidebar{background:var(--ink);color:#fff;padding:2rem 1.5rem;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
-  .sidebar-logo{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;margin-bottom:4px;line-height:1.2}
-  .sidebar-role{font-size:11px;color:#9A9589;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2rem}
-  .nav-section{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#9A9589;margin-bottom:6px;margin-top:1.25rem}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:13px;color:#C8C3BA;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left}
-  .nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
-  .nav-item.active{background:var(--accent);color:#fff}
-  .nav-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.5}
-  .nav-item.active .nav-dot{opacity:1}
-  .nav-num{font-size:10px;opacity:.4;margin-left:auto}
-  .sidebar-footer{margin-top:auto;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.08)}
-  .score-pill{background:rgba(255,255,255,.07);border-radius:10px;padding:12px 14px}
-  .score-pill-label{color:#9A9589;font-size:11px;margin-bottom:4px}
-  .score-pill-val{font-size:22px;font-family:'DM Serif Display',serif;color:#fff}
-  .score-track{height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin-top:8px;overflow:hidden}
-  .score-track-fill{height:100%;border-radius:2px;background:var(--accent2);transition:width .4s}
-  .main{padding:2.5rem;max-width:840px}
-  .section-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);margin-bottom:1.5rem;overflow:hidden;display:none}
-  .section-card.visible{display:block}
-  .section-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-  .section-num{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .section-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink)}
-  .section-goal{font-size:12px;color:var(--ink3);margin-left:auto;text-align:right;max-width:200px;line-height:1.4;font-style:italic}
-  .section-body{padding:1.5rem}
-  .setup-card{background:var(--ink);color:#fff;border-radius:14px;padding:2rem;margin-bottom:1.5rem;display:none}
-  .setup-card.visible{display:block}
-  .setup-card h1{font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:6px}
-  .setup-card>p{font-size:14px;color:#9A9589;margin-bottom:1.5rem}
-  .setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem}
-  .setup-field label{display:block;font-size:11px;color:#9A9589;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
-  .setup-field input{width:100%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:14px;color:#fff;outline:none;transition:border-color .15s}
-  .setup-field input::placeholder{color:#6B6760}
-  .setup-field input:focus{border-color:var(--accent2)}
-  .intro-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .intro-stat{background:rgba(255,255,255,.07);border-radius:8px;padding:12px}
-  .intro-stat-val{font-size:18px;font-family:'DM Serif Display',serif;color:#fff}
-  .intro-stat-label{font-size:11px;color:#9A9589;margin-top:2px}
-  .toggle-detail{margin-bottom:10px}
-  .toggle-detail summary{font-size:12px;font-weight:500;cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);color:var(--ink2);user-select:none}
-  .toggle-detail summary::-webkit-details-marker{display:none}
-  .toggle-detail summary::before{content:'▸';font-size:10px;color:var(--ink3);transition:transform .15s}
-  .toggle-detail[open] summary::before{transform:rotate(90deg)}
-  .toggle-detail.amber summary{background:var(--amber-bg);border-color:#E8C07A;color:var(--amber)}
-  .toggle-detail.amber summary::before{color:var(--amber)}
-  .toggle-detail.purple summary{background:var(--purple-bg);border-color:#C8BAF0;color:var(--purple)}
-  .toggle-detail.purple summary::before{color:var(--purple)}
-  .toggle-detail.green summary{background:var(--green-bg);border-color:#9ED4B8;color:var(--green)}
-  .toggle-detail.green summary::before{color:var(--green)}
-  .toggle-detail .detail-body{padding:10px 12px;font-size:13px;color:var(--ink2);line-height:1.5;border:1px solid var(--border);border-top:none;border-radius:0 0 7px 7px;background:var(--surface)}
-  .toggle-detail.amber .detail-body{background:var(--amber-bg);border-color:#E8C07A}
-  .toggle-detail.purple .detail-body{background:var(--purple-bg);border-color:#C8BAF0}
-  .toggle-detail.green .detail-body{background:var(--green-bg);border-color:#9ED4B8}
-  .exit-speech{background:var(--red-bg);border:1px solid #F0BEBE;border-radius:8px;overflow:hidden;margin-bottom:10px}
-  .exit-speech-header{padding:8px 12px;font-size:11px;font-weight:500;color:var(--red);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid #F0BEBE;background:#F9DEDE;cursor:pointer;display:flex;align-items:center;gap:6px}
-  .exit-speech-header::before{content:'▸';font-size:10px;transition:transform .15s}
-  .exit-speech.open .exit-speech-header::before{transform:rotate(90deg)}
-  .exit-speech-body{display:none;padding:12px 14px;font-size:14px;color:#6B1A1A;line-height:1.7;font-family:'DM Serif Display',serif;font-style:italic}
-  .exit-speech.open .exit-speech-body{display:block}
-  .question-block{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
-  .question-block:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0}
-  .question-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-  .q-num{width:18px;height:18px;border-radius:4px;background:var(--accent);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .question-text{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);line-height:1.55;margin-bottom:12px;font-style:italic}
-  .cn{color:var(--accent);font-style:normal;font-weight:500}
-  .rn{color:var(--accent2);font-style:normal;font-weight:500}
-  .tag-jolt{font-size:10px;background:#1A1916;color:#E8794A;padding:2px 8px;border-radius:20px;font-weight:500}
-  .tag-culture{font-size:10px;background:var(--purple-bg);color:var(--purple);padding:2px 8px;border-radius:20px;font-weight:500}
-  .tag-must{font-size:10px;background:var(--red-bg);color:var(--red);padding:2px 8px;border-radius:20px;font-weight:500}
-  .listen-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-  .listen-col-title{font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:500;margin-bottom:6px}
-  .listen-col.good .listen-col-title{color:var(--green)}
-  .listen-col.bad .listen-col-title{color:var(--red)}
-  .listen-item{font-size:12px;color:var(--ink2);padding:4px 8px 4px 20px;position:relative;line-height:1.4;margin-bottom:2px}
-  .listen-item::before{content:'';position:absolute;left:7px;top:10px;width:5px;height:5px;border-radius:50%}
-  .listen-col.good .listen-item::before{background:var(--green)}
-  .listen-col.bad .listen-item::before{background:var(--red)}
-  .followup-item{font-size:13px;color:var(--ink2);padding:4px 0 4px 18px;position:relative;line-height:1.4}
-  .followup-item::before{content:'→';position:absolute;left:0;font-size:11px;color:var(--ink3)}
-  .notes-area{background:var(--surface2);border-radius:8px;padding:10px 12px}
-  .notes-area-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:4px}
-  .notes-area textarea{width:100%;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);resize:none;line-height:1.5;min-height:44px}
-  .notes-area textarea::placeholder{color:var(--ink3)}
-  .check-row{display:flex;align-items:center;gap:10px;margin-top:10px}
-  .check-toggle{display:flex;border-radius:6px;overflow:hidden;border:1px solid var(--border);flex-shrink:0}
-  .check-toggle button{padding:5px 12px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:var(--ink3);transition:all .15s}
-  .check-toggle button.pass{background:var(--green-bg);color:var(--green);font-weight:500}
-  .check-toggle button.fail{background:var(--red-bg);color:var(--red);font-weight:500}
-  .check-toggle button.flag{background:var(--amber-bg);color:var(--amber);font-weight:500}
-  .check-label{font-size:12px;color:var(--ink3)}
-  .comp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1.25rem}
-  .comp-item{background:var(--surface2);border-radius:8px;padding:14px}
-  .comp-item-label{font-size:11px;color:var(--ink3);margin-bottom:4px}
-  .comp-item-val{font-size:17px;font-family:'DM Serif Display',serif;color:var(--ink)}
-  .comp-item-sub{font-size:11px;color:var(--ink3);margin-top:2px}
-  .culture-banner{background:var(--purple-bg);border:1px solid #D4C8F6;border-radius:10px;padding:14px 16px;margin-bottom:1.25rem}
-  .culture-banner-title{font-size:13px;font-weight:500;color:var(--purple);margin-bottom:8px}
-  .culture-trait{display:inline-block;background:#fff;border:1px solid #D4C8F6;border-radius:20px;font-size:12px;color:var(--purple);padding:3px 10px;margin:3px 3px 0 0}
-  .nav-bar{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;padding-top:1rem}
-  .nav-btn{padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink2);cursor:pointer;transition:all .15s}
-  .nav-btn:hover{background:var(--surface2)}
-  .nav-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .nav-btn.primary:hover{background:var(--accent);border-color:var(--accent)}
-  .summary-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;display:none}
-  .summary-card.visible{display:block}
-  .summary-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
-  .summary-row:last-child{border-bottom:none}
-  .summary-row-label{color:var(--ink2);font-size:13px}
-  .summary-status{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px}
-  .s-pass{background:var(--green-bg);color:var(--green)}
-  .s-fail{background:var(--red-bg);color:var(--red)}
-  .s-flag{background:var(--amber-bg);color:var(--amber)}
-  .s-blank{background:var(--surface2);color:var(--ink3)}
-  .verdict-banner{border-radius:10px;padding:1rem 1.25rem;margin-top:1rem;font-size:14px;font-weight:500}
-  .verdict-strong{background:var(--green-bg);color:var(--green)}
-  .verdict-maybe{background:var(--amber-bg);color:var(--amber)}
-  .verdict-pass{background:var(--red-bg);color:var(--red)}
-  .copy-btn{width:100%;padding:12px;margin-top:1rem;border-radius:8px;border:1px solid var(--border);background:var(--ink);color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all .15s}
-  .copy-btn:hover{background:var(--accent);border-color:var(--accent)}
-  b.hl{font-weight:500;color:var(--ink)}
-  @media(max-width:720px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto}.main{padding:1.25rem}.listen-grid{grid-template-columns:1fr}.intro-stats{grid-template-columns:1fr 1fr}.setup-grid{grid-template-columns:1fr}}
+:root{
+  --bg:#F7F4EE;--surface:#FFFFFF;--surface2:#F0EDE6;--surface3:#EAE6DF;
+  --ink:#1A1916;--ink2:#4A4640;--ink3:#8A857C;
+  --accent:#C4531A;--accent2:#E8794A;
+  --green:#1F7A4A;--green-bg:#EAF4EE;--green-border:rgba(31,122,74,.22);
+  --red:#B03A2A;--red-bg:#FDEAEA;--red-border:rgba(176,58,42,.22);
+  --amber:#9A6010;--amber-bg:#FEF3E2;--amber-border:rgba(154,96,16,.22);
+  --purple:#5B3B9E;--purple-bg:#F0ECFC;--purple-border:rgba(91,59,158,.22);
+  --blue:#2A5F95;--blue-bg:#EAF2FC;--blue-border:rgba(42,95,149,.22);
+  --border:#DDD8D0;--border2:#E8E4DF;
+  --shadow:0 1px 3px rgba(28,25,23,.06);
+  --shadow-md:0 4px 12px rgba(28,25,23,.07);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.6}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--ink);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;padding:1.5rem 1.1rem;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.sb-logo{font-family:'DM Serif Display',serif;font-size:16px;color:#fff;line-height:1.2;margin-bottom:3px}
+.sb-role{font-size:9px;color:#6E6A62;text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.5rem}
+.sb-section{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#6E6A62;margin-bottom:5px;margin-top:1rem}
+.sb-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:11.5px;color:#B8B3A8;transition:all .15s;margin-bottom:1px;border:1px solid transparent;background:none;width:100%;text-align:left}
+.sb-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.sb-item.active{background:rgba(196,83,26,.22);color:#E8794A;border-color:rgba(196,83,26,.28)}
+.sb-dot{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.5}
+.sb-item.active .sb-dot{opacity:1}
+.sb-num{font-size:9px;opacity:.35;margin-left:auto;flex-shrink:0}
+.sb-footer{margin-top:auto;padding-top:1.1rem;border-top:1px solid rgba(255,255,255,.08)}
+.score-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px}
+.score-pill-label{color:#6E6A62;font-size:9px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.score-pill-val{font-size:18px;font-family:'DM Serif Display',serif;color:#fff}
+.score-track{height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:6px;overflow:hidden}
+.score-fill{height:100%;border-radius:2px;background:var(--accent2);transition:width .4s}
+.main{padding:2rem 2.5rem;min-width:0}
+.setup-card{background:var(--ink);border-radius:14px;padding:2rem;margin-bottom:1.5rem;display:none}
+.setup-card.visible{display:block}
+.setup-card h1{font-family:'DM Serif Display',serif;font-size:24px;color:#fff;margin-bottom:4px}
+.setup-card>p{font-size:12px;color:#6E6A62;margin-bottom:1.5rem}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.setup-field label{display:block;font-size:9px;color:#9A9589;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.setup-field input{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:13px;color:#fff;outline:none;transition:border-color .15s}
+.setup-field input:focus{border-color:var(--accent2)}
+.setup-field input::placeholder{color:#6E6A62}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:10px 12px}
+.stat-box-val{font-size:15px;font-family:'DM Serif Display',serif;color:#fff}
+.stat-box-label{font-size:9px;color:#6E6A62;margin-top:2px}
+.save-indicator{font-size:10px;color:#6E6A62;margin-top:.65rem;font-style:italic;text-align:right;transition:color .3s}
+.save-indicator.saved{color:#4A9B6F}
+.sec-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);margin-bottom:1.5rem;overflow:hidden;display:none}
+.sec-card.visible{display:block}
+.sec-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;gap:10px}
+.sec-num{width:24px;height:24px;border-radius:50%;background:rgba(196,83,26,.1);border:1px solid rgba(196,83,26,.22);color:var(--accent);font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink)}
+.sec-timing{font-size:10px;color:var(--ink3);margin-left:auto;background:var(--surface3);border:1px solid var(--border);border-radius:20px;padding:2px 9px;white-space:nowrap}
+.col-headers{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border)}
+.col-header{padding:.45rem 1rem;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.col-header:not(:last-child){border-right:1px solid var(--border)}
+.col-header.q{color:var(--accent)}
+.col-header.l{color:var(--green)}
+.col-header.e{color:var(--red)}
+.question-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border2)}
+.question-row:last-of-type{border-bottom:none}
+.qcol{padding:1rem;min-width:0}
+.qcol:not(:last-child){border-right:1px solid var(--border2)}
+.listen-col{background:rgba(31,122,74,.02)}
+.exit-col{background:rgba(176,58,42,.02)}
+.q-tag{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.45rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.q-tag.say{color:var(--amber)}
+.q-tag.ask{color:var(--purple)}
+.q-tag.jolt{color:var(--red)}
+.q-tag.context{color:var(--blue)}
+.q-tag.note{color:var(--ink3)}
+.tag-pill{font-size:8px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:1px 6px;border-radius:20px;border:1px solid}
+.tag-must{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
+.block{border-radius:7px;padding:.65rem .9rem;margin:.3rem 0;line-height:1.65;font-size:.88rem;border:1.5px solid transparent;outline:none;cursor:text;transition:box-shadow .12s}
+.block[contenteditable="true"]:focus{box-shadow:0 0 0 2px rgba(196,83,26,.18)}
+.block-say{background:var(--amber-bg);border-color:var(--amber-border);border-left:3px solid var(--amber);color:var(--ink)}
+.block-ask{background:var(--purple-bg);border-color:var(--purple-border);color:var(--ink)}
+.block-jolt{background:var(--red-bg);border-color:var(--red-border);border-left:3px solid var(--red);color:var(--ink)}
+.block-context{background:var(--blue-bg);border-color:var(--blue-border);color:var(--ink2);font-size:.85rem;line-height:1.7}
+.block-note{background:var(--surface2);border-color:var(--border);color:var(--ink3);font-size:.8rem}
+.followup-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin:.55rem 0 .2rem}
+.followup{font-size:.82rem;color:var(--ink2);padding:2px 0 2px 14px;position:relative;line-height:1.45;cursor:text;outline:none;border-radius:4px}
+.followup:focus{background:var(--surface2);box-shadow:0 0 0 2px rgba(91,59,158,.15)}
+.followup::before{content:'→';position:absolute;left:0;font-size:10px;color:var(--ink3);pointer-events:none}
+.listen-group{margin-bottom:.7rem}
+.listen-group:last-child{margin-bottom:0}
+.listen-group-title{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.listen-group-title.strong{color:var(--green)}
+.listen-group-title.watch{color:var(--red)}
+.listen-group-title.note{color:var(--blue)}
+.listen-group-title.observe{color:var(--amber)}
+.listen-group-title.predict{color:var(--purple)}
+.listen-item{font-size:.78rem;color:var(--ink2);padding:2px 0 2px 13px;position:relative;line-height:1.4;margin-bottom:1px}
+.listen-item::before{position:absolute;left:1px;font-size:9px;top:4px}
+.listen-group.strong .listen-item::before{content:'✦';color:var(--green)}
+.listen-group.watch .listen-item::before{content:'⚑';color:var(--red)}
+.listen-group.note .listen-item::before{content:'→';color:var(--blue)}
+.listen-group.observe .listen-item::before{content:'◎';color:var(--amber)}
+.listen-group.predict .listen-item::before{content:'◈';color:var(--purple)}
+.predict-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:.5rem 0 .25rem}
+.predict-label.s{color:var(--green)}
+.predict-label.a{color:var(--amber)}
+.predict-label.w{color:var(--red)}
+.predict-quote{font-size:.78rem;color:var(--ink2);font-style:italic;padding:4px 8px;border-radius:5px;margin-bottom:.2rem;line-height:1.4}
+.predict-quote.s{background:var(--green-bg);border-left:2px solid var(--green)}
+.predict-quote.a{background:var(--amber-bg);border-left:2px solid var(--amber)}
+.predict-quote.w{background:var(--red-bg);border-left:2px solid var(--red)}
+.exit-empty{display:flex;align-items:center;justify-content:center;height:100%;font-size:.72rem;color:var(--border);font-style:italic;padding:1rem}
+.exit-speech{background:var(--red-bg);border:1px solid var(--red-border);border-radius:7px;overflow:hidden}
+.exit-header{padding:6px 10px;font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--red);cursor:pointer;display:flex;align-items:center;gap:5px;background:rgba(176,58,42,.1);border-bottom:1px solid var(--red-border);user-select:none}
+.exit-header::before{content:'▸';font-size:8px;transition:transform .15s}
+.exit-speech.open .exit-header::before{transform:rotate(90deg)}
+.exit-body{display:none;padding:10px 12px;font-size:.82rem;color:#8B2020;line-height:1.65;font-family:'DM Serif Display',serif;font-style:italic}
+.exit-speech.open .exit-body{display:block}
+.exit-hint{font-size:.7rem;color:var(--ink3);font-style:italic;margin-top:.5rem;line-height:1.4}
+.notes-row{padding:.75rem 1rem;border-top:1px solid var(--border2);background:var(--surface2)}
+.notes-area{background:var(--surface);border-radius:6px;padding:7px 9px;border:1px solid var(--border)}
+.notes-area-label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:2px}
+.notes-area textarea{width:100%;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:11.5px;color:var(--ink);resize:none;line-height:1.5;min-height:32px}
+.notes-area textarea::placeholder{color:var(--ink3)}
+.check-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.check-toggle{display:flex;border-radius:5px;overflow:hidden;border:1px solid var(--border);flex-shrink:0}
+.check-toggle button{padding:3px 10px;font-size:10px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:var(--ink3);transition:all .12s}
+.check-toggle button.pass{background:var(--green-bg);color:var(--green);font-weight:500}
+.check-toggle button.fail{background:var(--red-bg);color:var(--red);font-weight:500}
+.check-toggle button.flag{background:var(--amber-bg);color:var(--amber);font-weight:500}
+.check-label{font-size:10px;color:var(--ink3)}
+
+/* OPTIONAL SITUATIONAL SECTION TOGGLE */
+.optional-toggle{display:flex;align-items:center;gap:.6rem;padding:.75rem 1.25rem;background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:10px;margin-bottom:1.5rem;cursor:pointer;user-select:none;transition:all .15s}
+.optional-toggle:hover{background:rgba(91,59,158,.1)}
+.optional-toggle-icon{width:18px;height:18px;border-radius:50%;background:var(--purple);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s}
+.optional-toggle.open .optional-toggle-icon{transform:rotate(90deg)}
+.optional-toggle-label{font-size:.82rem;font-weight:500;color:var(--purple)}
+.optional-toggle-sub{font-size:.72rem;color:var(--ink3);margin-left:auto}
+
+/* DRAG */
+.rp-list{list-style:none;padding:0;margin:0}
+.rp-item{border-bottom:1px solid var(--border2);transition:background .15s;position:relative}
+.rp-item:last-child{border-bottom:none}
+.rp-item.dragging{opacity:.4;background:var(--surface2)}
+.rp-item.drag-over{background:rgba(196,83,26,.05);border-top:2px solid var(--accent2)}
+.rp-row{display:grid;grid-template-columns:28px 1fr 1fr 1fr;align-items:start}
+.drag-handle{display:flex;align-items:center;justify-content:center;cursor:grab;color:var(--ink3);font-size:14px;padding:.75rem .25rem;user-select:none;opacity:.4;transition:opacity .12s;align-self:stretch}
+.drag-handle:hover{opacity:1;color:var(--accent)}
+.drag-handle:active{cursor:grabbing}
+.rp-qcol,.rp-listen-col,.rp-exit-col{padding:.85rem .9rem;min-width:0}
+.rp-qcol:not(:last-child),.rp-listen-col:not(:last-child){border-right:1px solid var(--border2)}
+.rp-listen-col{background:rgba(31,122,74,.02)}
+.rp-exit-col{background:rgba(176,58,42,.02)}
+.rp-item-controls{margin-top:.5rem}
+.del-btn{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--red);background:var(--red-bg);border:1px solid var(--red-border);border-radius:20px;padding:2px 8px;cursor:pointer;transition:all .12s;font-family:'DM Sans',sans-serif}
+.del-btn:hover{background:var(--red);color:#fff}
+.add-rp-btn{display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem;font-size:.82rem;font-weight:500;color:var(--accent);background:var(--surface2);border:none;border-top:1px solid var(--border);cursor:pointer;width:100%;transition:all .12s;font-family:'DM Sans',sans-serif}
+.add-rp-btn:hover{background:var(--surface3)}
+.add-rp-btn::before{content:'+';font-size:14px;font-weight:300}
+
+/* VERDICT */
+.verdict-body{padding:1.5rem}
+.filter-bar{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.85rem 1rem;margin-bottom:1rem}
+.filter-title{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.5rem}
+.filter-chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.fc{font-size:.72rem;font-weight:500;padding:.25rem .6rem;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--ink3);cursor:pointer;transition:all .12s;user-select:none}
+.fc:hover{border-color:var(--ink3);color:var(--ink2)}
+.fc.met{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.fc.fail{background:var(--red-bg);border-color:var(--red-border);color:var(--red)}
+.filter-hint{font-size:.65rem;color:var(--ink3);margin-top:.4rem;font-style:italic}
+.sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.85rem}
+.sc-cell{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:.6rem .85rem}
+.sc-cell-label{font-size:.52rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-bottom:.2rem}
+.sc-cell-val{font-family:'DM Serif Display',serif;font-size:.95rem;color:var(--ink3)}
+.cv-p{color:var(--green)}.cv-f{color:var(--red)}.cv-g{color:var(--amber)}
+.signal-box{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:.75rem 1rem;font-size:.85rem;color:var(--ink3);margin-bottom:1rem}
+.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.85rem}
+.nf{display:flex;flex-direction:column;gap:.25rem}
+.nf.full{grid-column:1/-1}
+.nf label{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.nf input,.nf textarea,.nf select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);outline:none;transition:border-color .15s;width:100%}
+.nf input:focus,.nf textarea:focus,.nf select:focus{border-color:var(--accent)}
+.nf textarea{resize:vertical;min-height:50px}
+.rating-row{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.25rem}
+.rb{width:30px;height:30px;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--ink3);font-size:.8rem;cursor:pointer;transition:all .12s;font-family:'DM Sans',sans-serif}
+.rb:hover{border-color:var(--amber);color:var(--amber)}
+.rb.sel{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);font-weight:600}
+.vrow{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.4rem}
+.vb{padding:.4rem .9rem;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--ink2);font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;transition:all .12s}
+.vb.vp{border-color:var(--green);color:var(--green)}.vb.vp.sel{background:var(--green-bg)}
+.vb.vh{border-color:var(--amber);color:var(--amber)}.vb.vh.sel{background:var(--amber-bg)}
+.vb.vd{border-color:var(--red);color:var(--red)}.vb.vd.sel{background:var(--red-bg)}
+.gen-btn{padding:.55rem 1.25rem;background:var(--ink);border:none;border-radius:20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:.65rem}
+.gen-btn:hover{background:var(--accent)}
+.summ-box{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:1rem 1.1rem;font-size:.78rem;color:var(--ink2);line-height:1.75;white-space:pre-wrap;display:none;margin-bottom:.5rem}
+.copy-btn{padding:.4rem .9rem;background:var(--blue);border:none;border-radius:20px;color:#fff;font-size:.72rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:none}
+.copy-btn:hover{opacity:.85}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;padding-top:1rem}
+.nav-btn{padding:8px 16px;border-radius:7px;border:1px solid var(--border);background:none;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink2);cursor:pointer;transition:all .12s}
+.nav-btn:hover{background:var(--surface2)}
+.nav-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.nav-btn.primary:hover{background:var(--accent);border-color:var(--accent)}
+b.hl{font-weight:600;color:var(--ink)}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto}.main{padding:1.25rem}.col-headers,.rp-row{grid-template-columns:1fr}.question-row{grid-template-columns:1fr}.sc-grid{grid-template-columns:1fr 1fr}.setup-grid{grid-template-columns:1fr}.notes-grid{grid-template-columns:1fr}.drag-handle{display:none}}
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="sidebar-logo">Proliance<br>Interview Guide</div>
-  <div class="sidebar-role">Field Assistant Runner</div>
-  <div class="nav-section">Sections</div>
-  <button class="nav-item active" onclick="goTo(0)"><span class="nav-dot"></span>Setup</button>
-  <button class="nav-item" onclick="goTo(1)"><span class="nav-dot"></span>Introduction<span class="nav-num">I</span></button>
-  <button class="nav-item" onclick="goTo(2)"><span class="nav-dot"></span>Physical &amp; Safety<span class="nav-num">II</span></button>
-  <button class="nav-item" onclick="goTo(3)"><span class="nav-dot"></span>Reliability &amp; Trust<span class="nav-num">III</span></button>
-  <button class="nav-item" onclick="goTo(4)"><span class="nav-dot"></span>Mindset &amp; Behavior<span class="nav-num">IV</span></button>
-  <button class="nav-item" onclick="goTo(5)"><span class="nav-dot"></span>Culture Fit<span class="nav-num">V</span></button>
-  <button class="nav-item" onclick="goTo(6)"><span class="nav-dot"></span>Closing &amp; Comp<span class="nav-num">VI</span></button>
-  <button class="nav-item" onclick="goTo(7)"><span class="nav-dot"></span>Summary</button>
-  <div class="sidebar-footer">
+  <div class="sb-logo">Proliance<br>Interview Guide</div>
+  <div class="sb-role">Field Assistant Runner</div>
+  <div class="sb-section">Sections</div>
+  <button class="sb-item active" onclick="goTo(0)"><span class="sb-dot"></span>Setup</button>
+  <button class="sb-item" onclick="goTo(1)"><span class="sb-dot"></span>Intro & Rapport<span class="sb-num">I</span></button>
+  <button class="sb-item" onclick="goTo(2)"><span class="sb-dot"></span>Work History<span class="sb-num">II</span></button>
+  <button class="sb-item" onclick="goTo(3)"><span class="sb-dot"></span>Prove Experience<span class="sb-num">III</span></button>
+  <button class="sb-item" onclick="goTo(4)"><span class="sb-dot"></span>Company Overview<span class="sb-num">IV</span></button>
+  <button class="sb-item" onclick="goTo(5)"><span class="sb-dot"></span>Physical & Safety<span class="sb-num">V</span></button>
+  <button class="sb-item" onclick="goTo(6)"><span class="sb-dot"></span>Reliability & Trust<span class="sb-num">VI</span></button>
+  <button class="sb-item" onclick="goTo(7)"><span class="sb-dot"></span>Situational <span style="font-size:8px;color:#7B5EA7;background:rgba(91,59,158,.2);border-radius:3px;padding:1px 4px;margin-left:2px">optional</span><span class="sb-num">VII</span></button>
+  <button class="sb-item" onclick="goTo(8)"><span class="sb-dot"></span>Pay & Schedule<span class="sb-num">VIII</span></button>
+  <button class="sb-item" onclick="goTo(9)"><span class="sb-dot"></span>Close & Verdict<span class="sb-num">IX</span></button>
+  <div class="sb-footer">
     <div class="score-pill">
       <div class="score-pill-label">Score</div>
-      <div class="score-pill-val" id="sidebar-score">0 / 14</div>
-      <div class="score-track"><div class="score-track-fill" id="sidebar-fill" style="width:0%"></div></div>
+      <div class="score-pill-val" id="sidebar-score">0 / 6</div>
+      <div class="score-track"><div class="score-fill" id="sidebar-fill" style="width:0%"></div></div>
     </div>
   </div>
 </aside>
+
 <main class="main">
 
 <!-- 0 SETUP -->
 <div class="setup-card visible" id="sec-0">
-  <h1>Before you start</h1>
-  <p>Fill this in — the candidate's name will appear throughout every question in the script.</p>
+  <h1>Field Assistant Runner</h1>
+  <p>Fill in once — populates throughout. All edits, notes, and order save permanently to your browser.</p>
   <div class="setup-grid">
-    <div class="setup-field"><label>Candidate name</label><input type="text" id="input-candidate" placeholder="e.g. Maria" oninput="updateNames()"/></div>
-    <div class="setup-field"><label>Your name (recruiter)</label><input type="text" id="input-recruiter" placeholder="e.g. Ressa" oninput="updateNames()"/></div>
-    <div class="setup-field"><label>Interview date</label><input type="text" id="input-date" placeholder="e.g. April 25"/></div>
-    <div class="setup-field"><label>Role applied for</label><input type="text" id="input-role" value="Field Assistant Runner"/></div>
+    <div class="setup-field"><label>Your name (recruiter)</label><input type="text" id="input-recruiter" placeholder="e.g. Ressa" oninput="updateNames();scheduleSave()"/></div>
+    <div class="setup-field"><label>Candidate name</label><input type="text" id="input-candidate" placeholder="e.g. Maria" oninput="updateNames();scheduleSave()"/></div>
+    <div class="setup-field"><label>Interview date</label><input type="text" id="input-date" placeholder="e.g. April 28" oninput="scheduleSave()"/></div>
+    <div class="setup-field"><label>Source / referral</label><input type="text" id="input-source" placeholder="e.g. Indeed, referral" oninput="scheduleSave()"/></div>
   </div>
-  <div class="intro-stats">
-    <div class="intro-stat"><div class="intro-stat-val">$700</div><div class="intro-stat-label">starting / week</div></div>
-    <div class="intro-stat"><div class="intro-stat-val">$800</div><div class="intro-stat-label">after 40 days</div></div>
-    <div class="intro-stat"><div class="intro-stat-val">6</div><div class="intro-stat-label">must-haves</div></div>
-    <div class="intro-stat"><div class="intro-stat-val">Full-time</div><div class="intro-stat-label">+ every Saturday</div></div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-box-val">$700/wk</div><div class="stat-box-label">Starting pay</div></div>
+    <div class="stat-box"><div class="stat-box-val">$800/wk</div><div class="stat-box-label">After 40 days</div></div>
+    <div class="stat-box"><div class="stat-box-val">Mon–Sat</div><div class="stat-box-label">Weekdays + Saturdays</div></div>
+  </div>
+  <div class="save-indicator" id="save-indicator">All edits save automatically to your browser</div>
+</div>
+
+<!-- I INTRO & RAPPORT -->
+<div class="sec-card" id="sec-1">
+  <div class="sec-header"><div class="sec-num">I</div><div class="sec-title">Intro & Rapport</div><div class="sec-timing">0–3 min</div></div>
+  <div class="col-headers"><div class="col-header q">Script</div><div class="col-header l">Observe · Listen For · Predict</div><div class="col-header e">Exit Speech</div></div>
+  <div class="question-row">
+    <div class="qcol">
+      <div class="q-tag say">Say — Opening</div>
+      <div class="block block-say" contenteditable="true" data-save-key="i-open">"Hi, is this <span class="cn">___</span>? Hey — this is <span class="rn">___</span>, I'm with Proliance's recruiting team. How's it going?"</div>
+      <div class="q-tag say" style="margin-top:.75rem">Say — Reason for call</div>
+      <div class="block block-say" contenteditable="true" data-save-key="i-reason">"We received your application for the Field Assistant Runner role. I'll keep this quick and direct — this call is really to figure out if this makes sense on both sides. I'll ask a few questions about your background and what you're looking for, and I'll also give you a quick overview of the role so you can decide if it fits. If it doesn't make sense, that's totally fine — we'll just be upfront about it. That way it protects your time and mine. Is that fair? I have about 20–30 minutes. Does now still work?"</div>
+    </div>
+    <div class="qcol listen-col">
+      <div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Energy when they pick up — warm and ready vs. caught off guard</div><div class="listen-item">Do they sound like they want to be on this call?</div><div class="listen-item">How they say "yes" to the frame — eager, neutral, or reluctant</div></div>
+      <div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"Yeah absolutely, I was actually looking forward to hearing from you"</div><div class="predict-label a">Average</div><div class="predict-quote a">"Sure, yeah I have time" — fine, just neutral</div><div class="predict-label w">Watch</div><div class="predict-quote w">"Can you call me back in a bit?" with no specific time — low investment</div></div>
+    </div>
+    <div class="qcol exit-col"><div class="exit-empty">—</div></div>
+  </div>
+  <div class="notes-row">
+    <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Energy, tone, readiness..." oninput="autoResize(this);scheduleSave()" data-save-key="note-intro"></textarea></div>
+    <div class="check-row" style="margin-top:.5rem"><div class="check-toggle"><button onclick="setCheck(this,'intro','pass')">Pass</button><button onclick="setCheck(this,'intro','flag')">Flag</button><button onclick="setCheck(this,'intro','fail')">No</button></div><span class="check-label">Warm, present, willing to engage</span></div>
   </div>
 </div>
 
-<!-- I INTRODUCTION -->
-<div class="section-card" id="sec-1">
-  <div class="section-header"><div class="section-num">I</div><div class="section-title">Introduction &amp; Icebreaker</div><div class="section-goal">Set tone. Did they actually read the post?</div></div>
-  <div class="section-body">
-    <details class="toggle-detail amber" style="margin-bottom:1.25rem"><summary>Before you start</summary><div class="detail-body">Keep it warm and relaxed — you want their real personality, not a rehearsed performance. Watch how they carry themselves before you even ask anything. <b class="hl">First impressions here are data.</b></div></details>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">1</span> Your intro &amp; opening question</div>
-      <div class="question-text">"Hey <span class="cn">___</span>, thanks for coming in! I'm <span class="rn">___</span>, one of the recruiters here at Proliance — we're a roofing and general contracting company based in the US. This role is really the engine that keeps our production and sales teams moving in the field. Before I get into anything formal — what made you apply for this one specifically?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>Why this question works</summary><div class="detail-body">You're not asking what they know — you're asking <b class="hl">what pulled them toward it.</b> Someone who read it and connected to something specific is very different from someone bulk-applying who barely remembers the post.</div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong answer</div><div class="listen-item">Mentions something specific — outdoor work, driving, variety, the pay</div><div class="listen-item">Sounds like something clicked when they read it</div><div class="listen-item">Talks about what they want, not just what they need</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Watch for</div><div class="listen-item">"I just needed a job" with nothing behind it</div><div class="listen-item">Can't recall what the post actually said</div><div class="listen-item">Generic — "I like people" with no substance</div></div>
-      </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="What did they say? Did it feel genuine?" oninput="autoResize(this)" data-key="intro-q1"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'intro-q1','pass')">Pass</button><button onclick="setCheck(this,'intro-q1','flag')">Flag</button><button onclick="setCheck(this,'intro-q1','fail')">No</button></div><span class="check-label">Applied with intention</span></div>
+<!-- II WORK HISTORY -->
+<div class="sec-card" id="sec-2">
+  <div class="sec-header"><div class="sec-num">II</div><div class="sec-title">Work History</div><div class="sec-timing">3–9 min</div></div>
+  <div class="col-headers"><div class="col-header q">Script</div><div class="col-header l">Observe · Listen For · Predict</div><div class="col-header e">Exit Speech</div></div>
+
+  <div class="question-row">
+    <div class="qcol">
+      <div class="q-tag ask">Let's start — Present reality</div>
+      <div class="block block-ask" contenteditable="true" data-save-key="ii-now">"Let's start with something simple — what are you currently doing for work right now?"</div>
+      <div class="followup-label">Follow up lightly</div>
+      <div class="followup" contenteditable="true" data-save-key="ii-howlong">"How long have you been there?"</div>
+      <div class="followup" contenteditable="true" data-save-key="ii-typical">"What does a typical day look like for you?"</div>
+      <div class="q-tag ask" style="margin-top:.75rem">Step 3 — Bridge to satisfaction</div>
+      <div class="block block-ask" contenteditable="true" data-save-key="ii-howsbeen">"Got it. And how's that actually been for you so far?"</div>
+      <div class="followup-label">Open the door</div>
+      <div class="followup" contenteditable="true" data-save-key="ii-enjoy">"What do you enjoy about it?"</div>
+      <div class="followup" contenteditable="true" data-save-key="ii-missing">"What's been a little frustrating or missing?"</div>
+      <div class="q-tag jolt" style="margin-top:.75rem">Step 4 — Contrast question</div>
+      <div class="block block-jolt" contenteditable="true" data-save-key="ii-contrast">"If nothing changed there over the next 6 to 12 months — how would you feel about that?"</div>
+      <div class="q-tag ask" style="margin-top:.75rem">Step 5 — Earned why</div>
+      <div class="block block-ask" contenteditable="true" data-save-key="ii-why">"So with that in mind — what made you start exploring other opportunities right now?"</div>
     </div>
+    <div class="qcol listen-col">
+      <div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Do they open up more as you go — or stay surface throughout?</div><div class="listen-item">Who is the villain in their story?</div><div class="listen-item">Tone shift on the contrast question — do they pause, or answer instantly?</div><div class="listen-item">The contrast question unlocks real urgency. Watch what it reveals.</div></div>
+      <div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong signal</div><div class="listen-item">Owns their situation — "I stayed too long somewhere I outgrew"</div><div class="listen-item">Moving toward something — not just escaping</div><div class="listen-item">Contrast answer has real tension: "I'd feel stuck. I need to be moving."</div></div>
+      <div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Watch for</div><div class="listen-item">Every problem is someone else's fault</div><div class="listen-item">Contrast answer is flat: "I guess it'd be fine" — no urgency, no drive</div><div class="listen-item">"Just looking for something better" — no direction</div></div>
+      <div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"Honestly? I'd be frustrated. I know I can do more than what I'm doing. I just haven't been in the right environment."</div><div class="predict-label a">Average</div><div class="predict-quote a">"The pay isn't great and there's not much growth — I'd probably still be there but looking."</div><div class="predict-label w">Watch</div><div class="predict-quote w">"I mean it'd be okay I guess. It's just a job." — no drive, no urgency</div></div>
+    </div>
+    <div class="qcol exit-col"><div class="exit-empty">—</div></div>
+  </div>
+  <div class="notes-row">
+    <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Real reason or surface? Urgency on contrast question? Motivation type?" oninput="autoResize(this);scheduleSave()" data-save-key="note-history"></textarea></div>
+    <div class="check-row" style="margin-top:.5rem"><div class="check-toggle"><button onclick="setCheck(this,'history','pass')">Pass</button><button onclick="setCheck(this,'history','flag')">Flag</button><button onclick="setCheck(this,'history','fail')">No</button></div><span class="check-label">Real motivation — moving toward something with urgency</span></div>
   </div>
 </div>
 
-<!-- II PHYSICAL -->
-<div class="section-card" id="sec-2">
-  <div class="section-header"><div class="section-num">II</div><div class="section-title">Physical &amp; Safety</div><div class="section-goal">Can they actually do the physical work?</div></div>
-  <div class="section-body">
-    <details class="toggle-detail amber" style="margin-bottom:1.25rem"><summary>Context for you</summary><div class="detail-body"><b class="hl">Heights is the first disqualifier.</b> Training handles the drone and inspection process — it does not handle fear of heights. If someone is genuinely scared, they are a liability and a retention risk. Make it safe to be honest so the yes you get back actually means something.</div></details>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">1</span> Heights <span class="tag-must">must-have</span></div>
-      <div class="question-text">"<span class="cn">___</span>, part of this role is getting on rooftops — including steep ones. I want to be upfront about that. Walk me through your relationship with heights — be real with me."</div>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong answer</div><div class="listen-item">Has actual experience — construction, cleaning, roofing, military</div><div class="listen-item">Confident, no visible hesitation</div><div class="listen-item">Asks about safety protocols — engaged, not reckless</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Red flags</div><div class="listen-item">"I think I can handle it" — uncertain even after the jolt</div><div class="listen-item">Body language shifts — arms cross, looks down</div><div class="listen-item">Asks if it can be avoided or if someone else can go up</div></div>
-      </div>
-      <details class="toggle-detail purple" style="margin-bottom:10px"><summary>If they hesitate — follow-up questions</summary><div class="detail-body"><div class="followup-item">"What's the highest you've been on a ladder or roof before?"</div><div class="followup-item">"If you got up there and it felt worse than expected — what would you do?"</div></div></details>
-      <div class="exit-speech" id="exit-heights"><div class="exit-speech-header" onclick="toggleExit('exit-heights')">Exit speech — if they don't pass heights</div><div class="exit-speech-body">"<span class="cn">___</span>, I really appreciate your honesty — and I mean that. This part of the role is something we can't work around, and I'd rather be upfront with you than put you in a situation that's not the right fit. You've got strong qualities and I think there's a role out there that's a better match. I'll keep your info on file and if something comes up that doesn't involve rooftop work, we'll reach out. Thanks so much for your time today."</div></div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Confidence level? Experience? Body language?" oninput="autoResize(this)" data-key="phys-heights"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'phys-heights','pass')">Pass</button><button onclick="setCheck(this,'phys-heights','flag')">Flag</button><button onclick="setCheck(this,'phys-heights','fail')">No</button></div><span class="check-label">Comfortable with heights</span></div>
+<!-- III PROVE EXPERIENCE -->
+<div class="sec-card" id="sec-3">
+  <div class="sec-header"><div class="sec-num">III</div><div class="sec-title">Prove Experience</div><div class="sec-timing">9–13 min</div></div>
+  <div class="col-headers"><div class="col-header q">Script</div><div class="col-header l">Observe · Listen For · Predict</div><div class="col-header e">Exit Speech</div></div>
+  <div class="question-row">
+    <div class="qcol">
+      <div class="q-tag ask">Ask — one real story <span class="tag-pill tag-must">must-prove</span></div>
+      <div class="block block-ask" contenteditable="true" data-save-key="iii-main">"Before I walk you through the role — give me one example of a time you had to manage multiple tasks or responsibilities at once without someone telling you exactly what to do. What happened?"</div>
+      <div class="followup-label">If they ramble</div>
+      <div class="followup" contenteditable="true" data-save-key="iii-f1">"Let me pause you — what was your specific role in that?"</div>
+      <div class="followup-label">Go deeper</div>
+      <div class="followup" contenteditable="true" data-save-key="iii-f2">"What did you prioritize first and why?"</div>
+      <div class="followup" contenteditable="true" data-save-key="iii-f3">"What would have happened if you hadn't stepped up?"</div>
+      <div class="followup-label">If too passive</div>
+      <div class="block block-jolt" contenteditable="true" data-save-key="iii-jolt">"Tell me what you actually did — not what you would do."</div>
     </div>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">2</span> Physical stamina <span class="tag-must">must-have</span></div>
-      <div class="question-text">"Describe the most physically demanding workday you've had, <span class="cn">___</span>. What was it, and how did you feel by the end of it?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>Why ask it this way</summary><div class="detail-body">You're not asking "are you fit" — you're asking for <b class="hl">evidence.</b> A story reveals what their actual baseline is. Someone whose hardest day was a long office shift is not the same as someone who's done construction, delivery, or field work.</div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong answer</div><div class="listen-item">Gives a real, specific example</div><div class="listen-item">Sounds used to physical work, maybe even misses it</div><div class="listen-item">Describes managing energy, not just surviving the day</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Red flags</div><div class="listen-item">Their "hard day" was mostly sitting or standing still</div><div class="listen-item">Sounds like it exhausted or broke them</div><div class="listen-item">Can't think of a relevant example</div></div>
-      </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="What was their hardest day? How did they describe it?" oninput="autoResize(this)" data-key="phys-stamina"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'phys-stamina','pass')">Pass</button><button onclick="setCheck(this,'phys-stamina','flag')">Flag</button><button onclick="setCheck(this,'phys-stamina','fail')">No</button></div><span class="check-label">Physically capable</span></div>
+    <div class="qcol listen-col">
+      <div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Do they have a story ready — or are they searching?</div><div class="listen-item">Pronouns — "I did" vs "we did"</div><div class="listen-item">Do they own their role — or credit circumstances?</div></div>
+      <div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong</div><div class="listen-item">Specific — names the situation, what they did, what happened</div><div class="listen-item">Shows initiative — didn't wait to be told</div><div class="listen-item">Calm under pressure — not frantic energy</div></div>
+      <div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Weak</div><div class="listen-item">"I'd probably just..." — hypothetical, not real experience</div><div class="listen-item">Story ends with someone else solving it</div><div class="listen-item">Can't think of a real example</div></div>
+      <div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"At my last job, our coordinator was out and I had 4 pickups and a bank run on the same day. I mapped it out myself, did the urgent ones first, texted updates to the team, and got everything done."</div><div class="predict-label a">Average</div><div class="predict-quote a">"I've had busy days where I had to figure things out — I usually just make a list and work through it."</div><div class="predict-label w">Watch</div><div class="predict-quote w">"I mean I'm pretty organized, I'd just handle it as it comes" — no story, no specifics</div></div>
     </div>
+    <div class="qcol exit-col">
+      <div class="exit-speech" id="exit-experience"><div class="exit-header" onclick="toggleExit('exit-experience')">Exit — can't prove initiative</div><div class="exit-body" contenteditable="true" data-save-key="exit-exp">"<span class="cn">___</span>, I appreciate you sharing that. I want to be straight with you — this role requires someone who can figure things out in the field without being told every step. What I'm hearing is more about what you'd do rather than what you've actually done. That gap matters here, and I don't want to set you up for something that's not the right fit."</div></div>
+      <div class="exit-hint">Use after the jolt and follow-ups — not after the first soft answer.</div>
+    </div>
+  </div>
+  <div class="notes-row">
+    <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Specific or vague? Shows initiative? Owns their role?" oninput="autoResize(this);scheduleSave()" data-save-key="note-experience"></textarea></div>
+    <div class="check-row" style="margin-top:.5rem"><div class="check-toggle"><button onclick="setCheck(this,'experience','pass')">Pass</button><button onclick="setCheck(this,'experience','flag')">Flag</button><button onclick="setCheck(this,'experience','fail')">No</button></div><span class="check-label">Proved it — specific, shows initiative, owns their role</span></div>
   </div>
 </div>
 
-<!-- III RELIABILITY -->
-<div class="section-card" id="sec-3">
-  <div class="section-header"><div class="section-num">III</div><div class="section-title">Reliability &amp; Trust</div><div class="section-goal">Can we trust them with money and a company vehicle?</div></div>
-  <div class="section-body">
-    <details class="toggle-detail amber" style="margin-bottom:1.25rem"><summary>Context for you</summary><div class="detail-body">This person handles <b class="hl">company money and a company vehicle — mostly unsupervised.</b> You're not just checking their record. You're checking their <b class="hl">relationship with accountability.</b> Do they treat responsibility seriously or casually?</div></details>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">1</span> Trust &amp; accountability <span class="tag-must">must-have</span></div>
-      <div class="question-text">"<span class="cn">___</span>, tell me about a time you were trusted with something that wasn't yours — money, equipment, someone else's property. What happened and how did you handle it?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>What you're listening for</summary><div class="detail-body">Not whether they handled money before — but <b class="hl">how they behaved when accountable for something valuable.</b> Did they document? Over-communicate? The details in their story tell you everything.</div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong answer</div><div class="listen-item">Specific story — real amounts, real context</div><div class="listen-item">Treated it with clear seriousness</div><div class="listen-item">Mentions communication, documentation, checking in</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Red flags</div><div class="listen-item">Can't think of an example — it was never required of them</div><div class="listen-item">Casual attitude — "yeah it was fine, no big deal"</div><div class="listen-item">Story has a gap or doesn't quite add up</div></div>
-      </div>
-      <details class="toggle-detail purple" style="margin-bottom:10px"><summary>If the story is vague — follow-up questions</summary><div class="detail-body"><div class="followup-item">"What would you have done if something went wrong with the amount?"</div><div class="followup-item">"Did you keep a record or paper trail of any kind?"</div></div></details>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="What story did they tell? How serious did they seem?" oninput="autoResize(this)" data-key="rel-money"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'rel-money','pass')">Pass</button><button onclick="setCheck(this,'rel-money','flag')">Flag</button><button onclick="setCheck(this,'rel-money','fail')">No</button></div><span class="check-label">Trustworthy with responsibility</span></div>
+<!-- IV COMPANY OVERVIEW -->
+<div class="sec-card" id="sec-4">
+  <div class="sec-header"><div class="sec-num">IV</div><div class="sec-title">Company Overview</div><div class="sec-timing">13–17 min</div></div>
+  <div class="col-headers"><div class="col-header q">Script</div><div class="col-header l">Observe · Listen For · Predict</div><div class="col-header e">Exit Speech</div></div>
+  <div class="question-row">
+    <div class="qcol">
+      <div class="q-tag say">Say — Transition</div>
+      <div class="block block-say" contenteditable="true" data-save-key="iv-transition">"Awesome — let me give you a quick picture of what we do and where this role fits in."</div>
+      <div class="q-tag context" style="margin-top:.75rem">Company overview — read aloud</div>
+      <div class="block block-context" contenteditable="true" data-save-key="iv-overview">"We're a roofing and general contracting company based in the US. Most of our work comes through insurance claims — storm damage, hail, that kind of thing. We have a full team in the field every day running appointments, doing inspections, capturing drone footage, and keeping jobs moving.
+
+The Field Runner is essentially the engine that keeps that operation running. You'd be supporting the production and sales teams with things like picking up payments from clients, making bank deposits, capturing drone photos at job sites, and helping with roofing inspections. It's a busy, mobile role — no two days look the same.
+
+Here's what I want you to know: the people who've done well in this role didn't stay here long. Not because they left — but because they moved up. If you're someone who shows initiative, picks things up fast, and puts their hand up for new responsibilities — this role becomes a launchpad, not just a job. We've seen Runners move into field roles, inspection roles, and sales within a year.
+
+The vehicle and gas are covered. Training is paid from day one. We just need someone reliable, organized, and willing to work."</div>
+      <div class="q-tag ask" style="margin-top:.75rem">Check</div>
+      <div class="block block-ask" contenteditable="true" data-save-key="iv-check">"Does that make sense so far? Does it still sound like something you'd want to explore?"</div>
     </div>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">2</span> Driving <span class="tag-must">must-have</span></div>
-      <div class="question-text">"You'd be in a company vehicle every day, <span class="cn">___</span>. Clean driving record — and I mean clean. Any tickets, accidents, anything in the last three years I should know about?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>What you're listening for</summary><div class="detail-body"><b class="hl">"And I mean clean" adds mild pressure.</b> Someone with nothing to hide won't flinch. Someone with something to hide will hesitate — even slightly. <b class="hl">Watch for that pause.</b></div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong answer</div><div class="listen-item">Answers immediately — nothing to hide</div><div class="listen-item">If there was a minor incident, discloses it upfront and owns it</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Red flags</div><div class="listen-item">Hesitates before answering</div><div class="listen-item">Minimizes or downplays something that comes up</div><div class="listen-item">License issues — suspended, expired, restricted</div></div>
-      </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Any hesitation? Did they disclose anything?" oninput="autoResize(this)" data-key="rel-driving"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'rel-driving','pass')">Pass</button><button onclick="setCheck(this,'rel-driving','flag')">Flag</button><button onclick="setCheck(this,'rel-driving','fail')">No</button></div><span class="check-label">Clean driving record</span></div>
+    <div class="qcol listen-col">
+      <div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Do they connect it to their own experience while you explain?</div><div class="listen-item">Do they ask a question — or just stay quiet?</div><div class="listen-item">Does the "launchpad" framing excite them — or do they not react?</div></div>
+      <div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong signal</div><div class="listen-item">Lights up at the growth angle: "Oh so there's room to move up?"</div><div class="listen-item">Asks a smart question — territory, what a typical day looks like</div><div class="listen-item">Connects it to something they've done or want</div></div>
+      <div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Watch for</div><div class="listen-item">No reaction to the growth angle — just wants the job, any job</div><div class="listen-item">First question is only about pay — no curiosity about the role</div><div class="listen-item">Energy drops after the overview</div></div>
+      <div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"Yeah that actually sounds like exactly what I was looking for — I want something where I can prove myself and grow from there"</div><div class="predict-label a">Average</div><div class="predict-quote a">"Okay, sounds good. So I'd be doing different things every day?"</div><div class="predict-label w">Watch</div><div class="predict-quote w">"Yeah sure, sounds fine. What does it pay?" — no engagement with the role itself</div></div>
     </div>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">3</span> Saturday availability <span class="tag-must">must-have</span></div>
-      <div class="question-text">"Saturdays are required every single week, <span class="cn">___</span> — not every other, not most weeks. What does your Saturday currently look like, and what would you be giving up to do this?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>Why ask it this way</summary><div class="detail-body"><b class="hl">"What would you be giving up" invites honesty</b> instead of the automatic yes. If they're genuinely fine with Saturdays, they'll say "not much." If there's a real conflict, this surfaces it before it becomes a no-show problem three weeks in.</div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong answer</div><div class="listen-item">Says yes without any conditions attached</div><div class="listen-item">"Not much" or "nothing that can't shift" — clean and honest</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Hard disqualifier</div><div class="listen-item">"Usually" / "most weeks" / "as long as..." — that is a no</div><div class="listen-item">Secondary job, family conflict, or recurring commitment on Saturdays</div></div>
-      </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="What would they be giving up? Any hesitation or conditions?" oninput="autoResize(this)" data-key="rel-saturday"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'rel-saturday','pass')">Pass</button><button onclick="setCheck(this,'rel-saturday','flag')">Flag</button><button onclick="setCheck(this,'rel-saturday','fail')">No</button></div><span class="check-label">Saturday confirmed — no conditions</span></div>
-    </div>
+    <div class="qcol exit-col"><div class="exit-empty">—</div></div>
+  </div>
+  <div class="notes-row">
+    <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Reaction to overview? Did growth angle land? Questions they asked?" oninput="autoResize(this);scheduleSave()" data-save-key="note-overview"></textarea></div>
+    <div class="check-row" style="margin-top:.5rem"><div class="check-toggle"><button onclick="setCheck(this,'overview','pass')">Pass</button><button onclick="setCheck(this,'overview','flag')">Flag</button><button onclick="setCheck(this,'overview','fail')">No</button></div><span class="check-label">Engaged with the role — growth angle resonated</span></div>
   </div>
 </div>
 
-<!-- IV MINDSET -->
-<div class="section-card" id="sec-4">
-  <div class="section-header"><div class="section-num">IV</div><div class="section-title">Mindset &amp; Behavior</div><div class="section-goal">How do they actually operate when things get hard?</div></div>
-  <div class="section-body">
-    <details class="toggle-detail amber" style="margin-bottom:1.25rem"><summary>Context for you</summary><div class="detail-body">Most candidates are coached on logistics questions. This section goes after <b class="hl">who they actually are</b> — how they handle pressure, frustration, and accountability <b class="hl">when no one is watching.</b> Listen for patterns, not polished answers.</div></details>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">1</span> Self-management under pressure <span class="tag-jolt">jolt</span></div>
-      <div class="question-text">"<span class="cn">___</span>, your day is planned. Two stops run long, one client won't answer the door, and it's already 3pm. You haven't eaten. Walk me through exactly what happens next."</div>
-      <details class="toggle-detail purple" style="margin-top:10px;margin-bottom:12px"><summary>What you're actually testing</summary><div class="detail-body">Not just time management — <b class="hl">emotional regulation.</b> Does this person spiral when conditions aren't ideal, or do they stay functional? The details they add — or skip — reveal how self-aware they really are.</div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong answer</div><div class="listen-item">Reprioritizes immediately — knows what can wait vs. what can't</div><div class="listen-item">Communicates proactively — calls ahead to next stop</div><div class="listen-item">Acknowledges frustration without being consumed by it</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Red flags</div><div class="listen-item">"I'd just push through" — no actual plan, just willpower talk</div><div class="listen-item">Would wait for someone to tell them what to do next</div><div class="listen-item">Hunger or frustration becomes the whole focus of the answer</div></div>
-      </div>
-      <details class="toggle-detail purple" style="margin-bottom:10px"><summary>If their answer is too clean — follow-up questions</summary><div class="detail-body"><div class="followup-item">"Be honest — what's the version where you're actually starting to get frustrated?"</div><div class="followup-item">"Have you had a day where everything stacked wrong? What did that actually look like?"</div></div></details>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Did they take ownership? Did they have an actual plan?" oninput="autoResize(this)" data-key="mind-selfmgmt"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'mind-selfmgmt','pass')">Pass</button><button onclick="setCheck(this,'mind-selfmgmt','flag')">Flag</button><button onclick="setCheck(this,'mind-selfmgmt','fail')">No</button></div><span class="check-label">Self-manages under pressure</span></div>
+<!-- V PHYSICAL & SAFETY -->
+<div class="sec-card" id="sec-5">
+  <div class="sec-header"><div class="sec-num">V</div><div class="sec-title">Physical & Safety</div><div class="sec-timing">17–20 min</div></div>
+  <div class="col-headers"><div class="col-header q">Script</div><div class="col-header l">Observe · Listen For · Predict</div><div class="col-header e">Exit Speech</div></div>
+  <div class="question-row">
+    <div class="qcol">
+      <div class="q-tag ask">Heights <span class="tag-pill tag-must">must-have</span></div>
+      <div class="block block-ask" contenteditable="true" data-save-key="v-heights">"Part of this role involves getting on rooftops — including steep ones — for inspections and drone photos. I want to be upfront about that. Walk me through your relationship with heights — be real with me."</div>
+      <div class="followup-label">If they hesitate</div>
+      <div class="followup" contenteditable="true" data-save-key="v-hf1">"What's the highest you've been on a ladder or roof before?"</div>
+      <div class="followup" contenteditable="true" data-save-key="v-hf2">"If you got up there and it felt worse than you expected — what would you do?"</div>
+      <div class="q-tag ask" style="margin-top:.75rem">Physical stamina <span class="tag-pill tag-must">must-have</span></div>
+      <div class="block block-ask" contenteditable="true" data-save-key="v-stamina">"Describe the most physically demanding workday you've had. What was it, and how did you feel by the end of it?"</div>
     </div>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">2</span> Accountability <span class="tag-jolt">jolt</span></div>
-      <div class="question-text">"Tell me about a time you made a mistake at work that affected someone else, <span class="cn">___</span>. What did you actually do?"</div>
-      <details class="toggle-detail purple" style="margin-top:10px;margin-bottom:12px"><summary>What you're actually testing</summary><div class="detail-body">The story matters less than <b class="hl">how they tell it.</b> Do they own it or subtly shift blame? Do they describe impact on the other person? Do they say what they changed — or just that they apologized? <b class="hl">Real accountability sounds specific and a little uncomfortable.</b></div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong answer</div><div class="listen-item">Owns it cleanly — no "but" or "technically it wasn't my fault"</div><div class="listen-item">Describes impact on others — not just how they felt</div><div class="listen-item">Says what they changed — not just that they apologized</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Red flags</div><div class="listen-item">The "mistake" ends up being someone else's fault by the end</div><div class="listen-item">Can't think of one — or picks something inconsequential</div><div class="listen-item">Rushes to "it worked out fine" without addressing the impact</div></div>
-      </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Did they genuinely own it? How did the story land?" oninput="autoResize(this)" data-key="mind-account"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'mind-account','pass')">Pass</button><button onclick="setCheck(this,'mind-account','flag')">Flag</button><button onclick="setCheck(this,'mind-account','fail')">No</button></div><span class="check-label">Takes ownership without deflecting</span></div>
+    <div class="qcol listen-col">
+      <div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Body language shift on heights — arms cross, voice drops?</div><div class="listen-item">Do they answer quickly and confidently — or hedge?</div><div class="listen-item">Stamina story — is their "hard day" actually physical?</div></div>
+      <div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong</div><div class="listen-item">Heights: has real experience — construction, military, cleaning, roofing</div><div class="listen-item">Asks about safety protocols — engaged, not reckless</div><div class="listen-item">Stamina: gives a specific, physical example — sounds used to it</div></div>
+      <div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Hard disqualifier</div><div class="listen-item">"I think I can handle it" — still uncertain after you've made it safe to say no</div><div class="listen-item">Asks if the roof part can be avoided</div><div class="listen-item">Stamina "hard day" was mostly sitting or standing</div></div>
+      <div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"Yeah, no problem — I've been on plenty of roofs doing construction. Heights don't bother me."</div><div class="predict-label w">Watch</div><div class="predict-quote w">"I mean I think I'd be okay... I haven't really been on a roof before but I can try"</div></div>
     </div>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">3</span> Unsupervised behavior <span class="tag-must">must-have</span> <span class="tag-jolt">jolt</span></div>
-      <div class="question-text">"<span class="cn">___</span>, if I called your last manager right now and asked what you're like when no one's watching — what would they say?"</div>
-      <details class="toggle-detail purple" style="margin-top:10px;margin-bottom:12px"><summary>What you're actually testing</summary><div class="detail-body">This role is <b class="hl">unsupervised by design.</b> You're hiring someone who <b class="hl">does the right thing when it costs them nothing to cut corners.</b> Their comfort level answering this tells you everything.</div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong answer</div><div class="listen-item">Answers without pause — they know who they are</div><div class="listen-item">Includes a real self-awareness moment — something still in progress</div><div class="listen-item">Doesn't just pitch themselves — sounds like a real person</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Red flags</div><div class="listen-item">Long pause before a very polished answer — performing</div><div class="listen-item">Zero self-awareness — "they'd say I'm basically perfect"</div><div class="listen-item">Won't let you contact their last manager</div></div>
-      </div>
-      <details class="toggle-detail purple" style="margin-bottom:10px"><summary>If they say "they'd say I'm great" — follow-up questions</summary><div class="detail-body"><div class="followup-item">"What's one thing they'd want you to still work on?"</div><div class="followup-item">"Is there anything they wish you did differently?"</div></div></details>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="How did they answer? Hesitation? Self-awareness?" oninput="autoResize(this)" data-key="mind-unsupervised"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'mind-unsupervised','pass')">Pass</button><button onclick="setCheck(this,'mind-unsupervised','flag')">Flag</button><button onclick="setCheck(this,'mind-unsupervised','fail')">No</button></div><span class="check-label">Trustworthy when unsupervised</span></div>
+    <div class="qcol exit-col">
+      <div class="exit-speech" id="exit-heights"><div class="exit-header" onclick="toggleExit('exit-heights')">Exit — genuine fear of heights</div><div class="exit-body" contenteditable="true" data-save-key="exit-heights">"<span class="cn">___</span>, I really appreciate your honesty — and I mean that. This part of the role is something we can't work around, and I'd rather be straight with you than put you in a situation that's not the right fit. You've got good qualities and I think there's a role out there that's a better match. I'll keep your info on file and if something comes up that doesn't involve rooftop work, we'll reach out."</div></div>
+      <div class="exit-hint">Use only after you've made it safe to say no. A candidate who's still hesitant after that is a liability and a retention risk.</div>
     </div>
+  </div>
+  <div class="notes-row">
+    <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Heights reaction — confident or hesitant? Stamina — physical example or not?" oninput="autoResize(this);scheduleSave()" data-save-key="note-physical"></textarea></div>
+    <div class="check-row" style="margin-top:.5rem"><div class="check-toggle"><button onclick="setCheck(this,'physical','pass')">Pass</button><button onclick="setCheck(this,'physical','flag')">Flag</button><button onclick="setCheck(this,'physical','fail')">No</button></div><span class="check-label">Comfortable with heights — physically capable</span></div>
   </div>
 </div>
 
-<!-- V CULTURE -->
-<div class="section-card" id="sec-5">
-  <div class="section-header"><div class="section-num">V</div><div class="section-title">Culture Fit</div><div class="section-goal">Would they thrive here? Would the team want them?</div></div>
-  <div class="section-body">
-    <div class="culture-banner"><div class="culture-banner-title">What this team actually looks like</div><span class="culture-trait">High energy, move fast</span><span class="culture-trait">Ownership mentality</span><span class="culture-trait">No hand-holding</span><span class="culture-trait">Team-first</span><span class="culture-trait">Direct communication</span><span class="culture-trait">Gritty &amp; action-oriented</span></div>
-    <details class="toggle-detail amber" style="margin-bottom:1.25rem"><summary>Context for you</summary><div class="detail-body">Culture fit is about <b class="hl">operating style.</b> Someone who needs constant direction will slow the team down. These questions surface how someone actually functions — <b class="hl">not how they want you to see them.</b></div></details>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">1</span> Environment fit <span class="tag-culture">culture</span></div>
-      <div class="question-text">"<span class="cn">___</span>, what kind of work environment has made you feel the most like yourself — not just productive, actually like yourself?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>Why "like yourself" matters</summary><div class="detail-body">It bypasses the rehearsed answer. You're asking <b class="hl">where they came alive</b> — not just where they performed. That filters out the candidate who's fine anywhere versus the one who genuinely fits here.</div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Culture match</div><div class="listen-item">Talks about energy, movement, variety — not structure or predictability</div><div class="listen-item">Mentions momentum, team pace, figuring things out on the fly</div><div class="listen-item">Lights up describing it — you can feel it</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Culture mismatch</div><div class="listen-item">Describes quiet, routine, heavily structured environments fondly</div><div class="listen-item">Values close supervision or very detailed daily direction</div><div class="listen-item">Their best environment sounds nothing like this role</div></div>
-      </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="What did they describe? Did it match what we're building here?" oninput="autoResize(this)" data-key="cult-environment"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'cult-environment','pass')">Pass</button><button onclick="setCheck(this,'cult-environment','flag')">Flag</button><button onclick="setCheck(this,'cult-environment','fail')">No</button></div><span class="check-label">Environment aligns with ours</span></div>
+<!-- VI RELIABILITY & TRUST -->
+<div class="sec-card" id="sec-6">
+  <div class="sec-header"><div class="sec-num">VI</div><div class="sec-title">Reliability & Trust</div><div class="sec-timing">20–23 min</div></div>
+  <div class="col-headers"><div class="col-header q">Script</div><div class="col-header l">Observe · Listen For · Predict</div><div class="col-header e">Exit Speech</div></div>
+  <div class="question-row">
+    <div class="qcol">
+      <div class="q-tag ask">Trust & accountability <span class="tag-pill tag-must">must-have</span></div>
+      <div class="block block-ask" contenteditable="true" data-save-key="vi-trust">"Tell me about a time you were trusted with something that wasn't yours — money, equipment, someone else's property. What happened and how did you handle it?"</div>
+      <div class="followup-label">If vague</div>
+      <div class="followup" contenteditable="true" data-save-key="vi-tf1">"What would you have done if something went wrong with the amount?"</div>
+      <div class="followup" contenteditable="true" data-save-key="vi-tf2">"Did you keep a record or paper trail?"</div>
+      <div class="q-tag ask" style="margin-top:.75rem">Driving <span class="tag-pill tag-must">must-have</span></div>
+      <div class="block block-ask" contenteditable="true" data-save-key="vi-driving">"You'd be in a company vehicle every day. Clean driving record — and I mean clean. Any tickets, accidents, anything in the last three years I should know about?"</div>
+      <div class="q-tag ask" style="margin-top:.75rem">Saturday <span class="tag-pill tag-must">must-have</span></div>
+      <div class="block block-ask" contenteditable="true" data-save-key="vi-sat">"Saturdays are required every week — not most weeks, every week. What does your Saturday currently look like and what would you be giving up?"</div>
     </div>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">2</span> Ownership mentality <span class="tag-culture">culture</span></div>
-      <div class="question-text">"<span class="cn">___</span>, tell me about a time the job asked more of you than was technically in your job description. What did you do?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>What you're listening for</summary><div class="detail-body">You need someone who sees going beyond the list as <b class="hl">normal, not as being taken advantage of.</b> The answer reveals whether their default is <b class="hl">ownership or compliance.</b></div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Ownership</div><div class="listen-item">Stepped up without being asked — saw the gap and filled it</div><div class="listen-item">Talks about it like they'd do it again — not a grudge story</div><div class="listen-item">"I just figured it was the right call" energy</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Compliance</div><div class="listen-item">Resentful tone — felt used or taken advantage of</div><div class="listen-item">The story is actually about refusing or negotiating the ask</div><div class="listen-item">Can't think of a time — stays strictly in their lane</div></div>
-      </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Ownership or compliance? How did they frame the extra effort?" oninput="autoResize(this)" data-key="cult-ownership"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'cult-ownership','pass')">Pass</button><button onclick="setCheck(this,'cult-ownership','flag')">Flag</button><button onclick="setCheck(this,'cult-ownership','fail')">No</button></div><span class="check-label">Ownership mentality</span></div>
+    <div class="qcol listen-col">
+      <div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Trust story — how seriously do they take responsibility? Casual or earnest?</div><div class="listen-item">Driving — any pause before answering? That pause is data.</div><div class="listen-item">Saturday — even a half-second hesitation matters. Watch their face.</div></div>
+      <div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong</div><div class="listen-item">Trust: specific story, real amounts, mentions documentation or communication</div><div class="listen-item">Driving: answers immediately, nothing to hide</div><div class="listen-item">Saturday: "Not much" — clean, no conditions attached</div></div>
+      <div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Hard disqualifiers</div><div class="listen-item">Trust: "No big deal" casual attitude about handling money</div><div class="listen-item">Driving: hesitates, then minimizes something that comes up</div><div class="listen-item">Saturday: "Usually" / "most weeks" / "as long as..." — that is a no</div></div>
+      <div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"Yeah, I was the keyholder at my last job — opened and closed the register daily. I always counted twice and documented everything."</div><div class="predict-label w">Watch</div><div class="predict-quote w">"Yeah I mean I've handled cash before, no big deal" — no seriousness about it</div></div>
     </div>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">3</span> Team dynamic <span class="tag-culture">culture</span> <span class="tag-jolt">jolt</span></div>
-      <div class="question-text">"What's the worst kind of teammate you've ever had to work with, <span class="cn">___</span>? Not who — what made them hard to be around?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>What you're listening for</summary><div class="detail-body"><b class="hl">The teammate they can't stand reveals the teammate they are.</b> If they hate people who don't carry their weight — they probably pull theirs. Vague answer like "just negativity" = low self-awareness.</div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Good signal</div><div class="listen-item">Frustrated by laziness, blame-shifting, or dragging the team down</div><div class="listen-item">Specific and grounded — a real situation they've lived</div><div class="listen-item">Implies they hold themselves to a higher standard</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Watch for</div><div class="listen-item">Bothered by high performers or "brown-nosers" — hints at low drive</div><div class="listen-item">Vague — "just negativity I guess" — low self-awareness</div><div class="listen-item">Bad teammate was always "giving them feedback" — defensive about criticism</div></div>
-      </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="What bothered them? What does it say about who they are?" oninput="autoResize(this)" data-key="cult-team"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'cult-team','pass')">Pass</button><button onclick="setCheck(this,'cult-team','flag')">Flag</button><button onclick="setCheck(this,'cult-team','fail')">No</button></div><span class="check-label">Team values align with ours</span></div>
+    <div class="qcol exit-col">
+      <div class="exit-speech" id="exit-trust"><div class="exit-header" onclick="toggleExit('exit-trust')">Exit — fails a must-have</div><div class="exit-body" contenteditable="true" data-save-key="exit-trust">"<span class="cn">___</span>, I want to be upfront with you. [Heights / Saturday availability / driving record] is something we can't work around in this role. I'd rather tell you now than waste your time. It doesn't reflect on you as a person — it's just a hard requirement for this specific position."</div></div>
+      <div class="exit-hint">Customize the bracketed part for whichever must-have is the issue.</div>
     </div>
+  </div>
+  <div class="notes-row">
+    <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Trust story — serious or casual? Driving — any hesitation? Saturday — conditions or clean?" oninput="autoResize(this);scheduleSave()" data-save-key="note-reliability"></textarea></div>
+    <div class="check-row" style="margin-top:.5rem"><div class="check-toggle"><button onclick="setCheck(this,'reliability','pass')">Pass</button><button onclick="setCheck(this,'reliability','flag')">Flag</button><button onclick="setCheck(this,'reliability','fail')">No</button></div><span class="check-label">Trustworthy · clean record · Saturday confirmed</span></div>
   </div>
 </div>
 
-<!-- VI CLOSING -->
-<div class="section-card" id="sec-6">
-  <div class="section-header"><div class="section-num">VI</div><div class="section-title">Closing &amp; Compensation</div><div class="section-goal">Set expectations clearly. Read their reaction.</div></div>
-  <div class="section-body">
-    <details class="toggle-detail amber" style="margin-bottom:1.25rem"><summary>Context for you</summary><div class="detail-body"><b class="hl">A strong candidate asks about training, the team, or what success looks like.</b> A weak candidate only asks about money and time off. <b class="hl">Watch their face when you say the numbers — that reaction is data.</b></div></details>
-    <div class="comp-grid">
-      <div class="comp-item"><div class="comp-item-label">Starting pay</div><div class="comp-item-val">$700 / week</div><div class="comp-item-sub">From day one</div></div>
-      <div class="comp-item"><div class="comp-item-label">After 40 days</div><div class="comp-item-val">$800 / week</div><div class="comp-item-sub">If performance is strong</div></div>
-      <div class="comp-item"><div class="comp-item-label">Vehicle</div><div class="comp-item-val">Company provided</div><div class="comp-item-sub">Full-time use</div></div>
-      <div class="comp-item"><div class="comp-item-label">Gas</div><div class="comp-item-val">Fully covered</div><div class="comp-item-sub">No out-of-pocket</div></div>
-    </div>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">1</span> Compensation delivery</div>
-      <div class="question-text">"Here's the structure, <span class="cn">___</span>: you start at $700 a week. After 40 days — assuming things are going well — that moves to $800. The company vehicle and gas are fully covered, so zero transportation cost on your end. Any questions on that before we keep going?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>Delivery note</summary><div class="detail-body"><b class="hl">"Assuming things are going well"</b> frames the increase as earned, not automatic. A confident candidate accepts that without flinching.</div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Good reaction</div><div class="listen-item">Accepts it clearly — asks about the 40-day review or training</div><div class="listen-item">Recognizes the vehicle and gas as real value</div><div class="listen-item">No immediate pushback — trusts the process</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Watch for</div><div class="listen-item">Immediately tries to negotiate before even starting</div><div class="listen-item">Visibly deflated — was expecting something higher</div><div class="listen-item">Only asks when the first paycheck comes</div></div>
+<!-- VII SITUATIONAL (OPTIONAL) -->
+<div class="sec-card" id="sec-7">
+  <div class="sec-header"><div class="sec-num">VII</div><div class="sec-title">Situational Questions</div><div class="sec-timing">Optional</div></div>
+
+  <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+    <div class="optional-toggle" id="situational-toggle" onclick="toggleSituational()">
+      <div class="optional-toggle-icon">▸</div>
+      <div>
+        <div class="optional-toggle-label">Use situational questions for this candidate</div>
+        <div style="font-size:.72rem;color:var(--ink3);margin-top:1px">Toggle on if you want to go deeper on judgment, self-awareness, and behavior</div>
       </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Their face? What did they ask?" oninput="autoResize(this)" data-key="close-comp"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'close-comp','pass')">Pass</button><button onclick="setCheck(this,'close-comp','flag')">Flag</button><button onclick="setCheck(this,'close-comp','fail')">No</button></div><span class="check-label">Comp reaction is professional</span></div>
+      <div class="optional-toggle-sub" id="sit-status">Off — skip to Pay & Schedule</div>
     </div>
-    <div class="question-block">
-      <div class="question-label"><span class="q-num">2</span> Final — their turn <span class="tag-jolt">jolt</span></div>
-      <div class="question-text">"Last one, <span class="cn">___</span>, and it's yours: what's the one thing about you that this interview probably didn't surface?"</div>
-      <details class="toggle-detail green" style="margin-top:10px;margin-bottom:12px"><summary>Why end with this</summary><div class="detail-body">One final chance to show you who they are on their own terms. Some reveal something genuinely great. Some go blank — which tells you <b class="hl">they've been performing the whole time, and when the script runs out, there's nothing left.</b></div></details>
-      <div class="listen-grid">
-        <div class="listen-col good"><div class="listen-col-title">✓ Strong close</div><div class="listen-item">Adds something real — a value, a belief about how they work</div><div class="listen-item">Confident, self-possessed — clearly knows who they are</div><div class="listen-item">Makes you want to hire them more than five minutes ago</div></div>
-        <div class="listen-col bad"><div class="listen-col-title">✗ Weak close</div><div class="listen-item">"I think I covered everything..." — no self-knowledge</div><div class="listen-item">Restates something they already said</div><div class="listen-item">Goes back to salary or start date logistics</div></div>
-      </div>
-      <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="What did they add? Did it change your read on them?" oninput="autoResize(this)" data-key="close-final"></textarea></div>
-      <div class="check-row"><div class="check-toggle"><button onclick="setCheck(this,'close-final','pass')">Pass</button><button onclick="setCheck(this,'close-final','flag')">Flag</button><button onclick="setCheck(this,'close-final','fail')">No</button></div><span class="check-label">Strong close — knows who they are</span></div>
+  </div>
+
+  <div id="situational-content" style="display:none">
+    <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr;border-bottom:1px solid var(--border)">
+      <div style="border-right:1px solid var(--border)"></div>
+      <div class="col-header q">Script / Question</div>
+      <div class="col-header l">Observe · Listen For · Predict</div>
+      <div class="col-header e">Exit Speech</div>
     </div>
+    <ul class="rp-list" id="sit-list"></ul>
+    <button class="add-rp-btn" onclick="addSitItem()">Add situational question</button>
+  </div>
+
+  <div class="notes-row">
+    <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Judgment quality, self-awareness, how they handled pressure scenarios..." oninput="autoResize(this);scheduleSave()" data-save-key="note-situational"></textarea></div>
+    <div class="check-row" style="margin-top:.5rem"><div class="check-toggle"><button onclick="setCheck(this,'situational','pass')">Pass</button><button onclick="setCheck(this,'situational','flag')">Flag</button><button onclick="setCheck(this,'situational','fail')">No</button></div><span class="check-label">Good judgment — self-aware, handles pressure well</span></div>
   </div>
 </div>
 
-<!-- SUMMARY -->
-<div class="summary-card" id="sec-7">
-  <h2 style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:4px">Interview Summary</h2>
-  <p style="font-size:13px;color:var(--ink3);margin-bottom:1.25rem" id="summary-subhead">Candidate: —</p>
-  <div id="summary-rows"></div>
-  <div id="verdict-banner" class="verdict-banner" style="display:none"></div>
-  <div style="margin-top:1.5rem">
-    <div style="font-size:12px;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em">Overall notes</div>
-    <textarea id="overall-notes" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);resize:none;min-height:80px;outline:none" placeholder="General impression, gut feel, anything that stood out..."></textarea>
+<!-- VIII PAY & SCHEDULE -->
+<div class="sec-card" id="sec-8">
+  <div class="sec-header"><div class="sec-num">VIII</div><div class="sec-title">Pay & Schedule</div><div class="sec-timing">23–27 min</div></div>
+  <div class="col-headers"><div class="col-header q">Script</div><div class="col-header l">Observe · Listen For · Predict</div><div class="col-header e">Exit Speech</div></div>
+  <div class="question-row">
+    <div class="qcol">
+      <div class="q-tag say">Say — Pay</div>
+      <div class="block block-say" contenteditable="true" data-save-key="viii-pay">"Here's the structure: you start at $700 a week. After 40 days — assuming things are going well — that moves to $800. The company vehicle and gas are fully covered, so zero transportation cost on your end."</div>
+      <div class="q-tag ask" style="margin-top:.75rem">Ask — reaction</div>
+      <div class="block block-ask" contenteditable="true" data-save-key="viii-react">"Any questions on the pay before we keep going?"</div>
+      <div class="q-tag ask" style="margin-top:.75rem">Ask — income check</div>
+      <div class="block block-ask" contenteditable="true" data-save-key="viii-income">"What are you making right now and what are you looking to get to?"</div>
+      <div class="block block-note" contenteditable="true" data-save-key="viii-note">If their goal is significantly above $800/week — be honest about the ceiling and see if they're still interested in the growth path.</div>
+    </div>
+    <div class="qcol listen-col">
+      <div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Face and energy when you say the numbers — relieved, disappointed, neutral?</div><div class="listen-item">First question after the pay reveal — what do they care about most?</div><div class="listen-item">Do they see the vehicle/gas as real value — or ignore it?</div></div>
+      <div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong reaction</div><div class="listen-item">Accepts it clearly — asks about the 40-day review or what "going well" means</div><div class="listen-item">Recognizes vehicle + gas as real additional value</div><div class="listen-item">Interested in the growth path more than just the starting number</div></div>
+      <div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Watch for</div><div class="listen-item">Immediately tries to negotiate before starting</div><div class="listen-item">Visibly deflated — was expecting significantly more</div><div class="listen-item">Only asks when the first paycheck comes</div></div>
+      <div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"That works for me. What does the 40-day review look like — is it automatic or based on performance?"</div><div class="predict-label a">Average</div><div class="predict-quote a">"Okay, that's fine. When would I start?"</div><div class="predict-label w">Watch</div><div class="predict-quote w">"$700 is a bit low — can that be negotiated?" before they've done a single day</div></div>
+    </div>
+    <div class="qcol exit-col"><div class="exit-empty">—</div></div>
   </div>
-  <button class="copy-btn" onclick="copySummary()">Copy full summary ↗</button>
+  <div class="notes-row">
+    <div class="notes-area"><div class="notes-area-label">Notes</div><textarea placeholder="Pay reaction? Current earnings? Goal? First question they asked?" oninput="autoResize(this);scheduleSave()" data-save-key="note-pay"></textarea></div>
+    <div class="check-row" style="margin-top:.5rem"><div class="check-toggle"><button onclick="setCheck(this,'pay','pass')">Pass</button><button onclick="setCheck(this,'pay','flag')">Flag</button><button onclick="setCheck(this,'pay','fail')">No</button></div><span class="check-label">Pay reaction professional — aligned with the role</span></div>
+  </div>
+</div>
+
+<!-- IX CLOSE & VERDICT -->
+<div class="sec-card" id="sec-9">
+  <div class="sec-header"><div class="sec-num">IX</div><div class="sec-title">Close & Verdict</div><div class="sec-timing">27–30 min</div></div>
+  <div class="col-headers"><div class="col-header q">Script</div><div class="col-header l">Observe · Listen For · Predict</div><div class="col-header e">Exit Speech</div></div>
+  <div class="question-row">
+    <div class="qcol">
+      <div class="q-tag ask">Temperature check</div>
+      <div class="block block-ask" contenteditable="true" data-save-key="ix-temp">"What are your thoughts so far? You've probably got other things on the table — what's most important to you in whatever you land on next?"</div>
+      <div class="block block-ask" contenteditable="true" data-save-key="ix-exc">"Excitement level 1 to 10 — be honest with me."</div>
+      <div class="block block-ask" contenteditable="true" data-save-key="ix-block">"Is there anything on your end that would stop this from moving forward?"</div>
+      <div class="q-tag say" style="margin-top:.75rem">Say — Next step</div>
+      <div class="block block-say" contenteditable="true" data-save-key="ix-next">"I want to get you in front of the next step as soon as possible — do you have availability in the next couple of hours?"</div>
+      <div class="block block-note" contenteditable="true" data-save-key="ix-note">Get them scheduled same day. The longer the gap, the lower the show rate.</div>
+    </div>
+    <div class="qcol listen-col">
+      <div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-group-title observe" style="margin-top:0"></div><div class="listen-item">Do they ask a smart question — or just say yes to everything?</div><div class="listen-item">9 or 10 excitement with no reason — ask why</div><div class="listen-item">Available same day = high investment</div></div>
+      <div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong close</div><div class="listen-item">Raises a real question or concern — evaluating you back</div><div class="listen-item">Excitement is specific: names something real about the role</div><div class="listen-item">Same-day availability without hesitation</div></div>
+      <div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Watch for</div><div class="listen-item">No questions at all — wasn't really evaluating, just performing</div><div class="listen-item">"10 for sure!" with no reason — surface enthusiasm</div><div class="listen-item">Can't meet for a week — low urgency</div></div>
+      <div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"Honestly an 8 — I like that there's a clear path to grow. Can I ask, what do the first two weeks of training look like?"</div><div class="predict-label w">Watch</div><div class="predict-quote w">"10! Yeah let's do it." — no real reason, no questions</div></div>
+    </div>
+    <div class="qcol exit-col"><div class="exit-empty">—</div></div>
+  </div>
+
+  <div class="verdict-body">
+    <div class="filter-bar">
+      <div class="filter-title">Filter criteria — tap to mark</div>
+      <div class="filter-chips">
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-1">Applied intentionally</span>
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-2">Real motivation — urgency present</span>
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-3">Proved initiative — specific story</span>
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-4">Comfortable with heights</span>
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-5">Trustworthy with money/property</span>
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-6">Clean driving record</span>
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-7">Saturday confirmed — no conditions</span>
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-8">Pay reaction professional</span>
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-9">Excitement 7+</span>
+        <span class="fc" onclick="toggleFc(this)" data-save-key="fc-10">Raised a real concern or question</span>
+      </div>
+      <div class="filter-hint">Green = met · Red = not met · Tap again to clear</div>
+    </div>
+    <div class="sc-grid" id="sc-grid"></div>
+    <div class="signal-box" id="signal-box">Score sections as you go — your recommendation will appear here.</div>
+    <div class="notes-grid">
+      <div class="nf"><label>Candidate name</label><input type="text" id="n-name" placeholder="Full name" oninput="scheduleSave()"/></div>
+      <div class="nf"><label>Date</label><input type="text" id="n-date" placeholder="e.g. April 28, 2026" oninput="scheduleSave()"/></div>
+      <div class="nf"><label>Current role</label><input type="text" id="n-role" placeholder="What they're doing now" oninput="scheduleSave()"/></div>
+      <div class="nf"><label>Motivation type</label>
+        <select id="n-motivation" onchange="scheduleSave()">
+          <option value="">— Select —</option>
+          <option>I Want Growth</option>
+          <option>I Want More Money</option>
+          <option>I'm Not Happy Anymore</option>
+          <option>Mixed / Unclear</option>
+        </select>
+      </div>
+      <div class="nf"><label>Current earnings</label><input type="text" id="n-income-past" placeholder="e.g. $35,000" oninput="scheduleSave()"/></div>
+      <div class="nf"><label>Income goal</label><input type="text" id="n-income-goal" placeholder="e.g. $50K" oninput="scheduleSave()"/></div>
+      <div class="nf full"><label>Behavioral notes</label><textarea id="n-behavioral" rows="3" placeholder="Story quality, initiative signals, reliability, energy..." oninput="scheduleSave()"></textarea></div>
+      <div class="nf full"><label>Red flags / additional notes</label><textarea id="n-extra" rows="2" placeholder="Anything worth capturing before you forget..." oninput="scheduleSave()"></textarea></div>
+      <div class="nf"><label>Excitement (1–10)</label>
+        <div class="rating-row"><button class="rb" onclick="setRating(1)">1</button><button class="rb" onclick="setRating(2)">2</button><button class="rb" onclick="setRating(3)">3</button><button class="rb" onclick="setRating(4)">4</button><button class="rb" onclick="setRating(5)">5</button><button class="rb" onclick="setRating(6)">6</button><button class="rb" onclick="setRating(7)">7</button><button class="rb" onclick="setRating(8)">8</button><button class="rb" onclick="setRating(9)">9</button><button class="rb" onclick="setRating(10)">10</button></div>
+      </div>
+      <div class="nf"><label>Verdict</label>
+        <div class="vrow">
+          <button class="vb vp" onclick="setVerdict('Pass to TR',this)">✓ Pass to TR</button>
+          <button class="vb vh" onclick="setVerdict('Follow Up',this)">⏸ Follow Up</button>
+          <button class="vb vd" onclick="setVerdict('Decline',this)">✕ Decline</button>
+        </div>
+      </div>
+    </div>
+    <button class="gen-btn" onclick="generateSummary()">Generate Summary →</button>
+    <div class="summ-box" id="summ-box"></div>
+    <button class="copy-btn" id="copy-btn" onclick="copySummary()">Copy to clipboard</button>
+  </div>
 </div>
 
 <div class="nav-bar">
@@ -406,36 +589,78 @@
 </div>
 </main>
 </div>
+
 <script>
-const sections=['sec-0','sec-1','sec-2','sec-3','sec-4','sec-5','sec-6','sec-7'];
-const navItems=document.querySelectorAll('.nav-item');
+const STORAGE_KEY='far_v1';
+const sections=['sec-0','sec-1','sec-2','sec-3','sec-4','sec-5','sec-6','sec-7','sec-8','sec-9'];
+const navItems=document.querySelectorAll('.sb-item');
 let current=0;
 const checkState={};
-const checkMap=[
-  {key:'intro-q1',label:'Applied with intention',must:false},
-  {key:'phys-heights',label:'Comfortable with heights',must:true},
-  {key:'phys-stamina',label:'Physically capable',must:true},
-  {key:'rel-money',label:'Trustworthy with responsibility',must:true},
-  {key:'rel-driving',label:'Clean driving record',must:true},
-  {key:'rel-saturday',label:'Saturday confirmed — no conditions',must:true},
-  {key:'mind-selfmgmt',label:'Self-manages under pressure',must:false},
-  {key:'mind-account',label:'Takes ownership without deflecting',must:false},
-  {key:'mind-unsupervised',label:'Trustworthy when unsupervised',must:true},
-  {key:'cult-environment',label:'Environment aligns with ours',must:false},
-  {key:'cult-ownership',label:'Ownership mentality',must:false},
-  {key:'cult-team',label:'Team values align with ours',must:false},
-  {key:'close-comp',label:'Comp reaction professional',must:false},
-  {key:'close-final',label:'Strong close — knows who they are',must:false},
+let currentRating=null;
+let currentVerdict=null;
+let saveTimer=null;
+let situationalOpen=false;
+
+const DEFAULT_SIT=[
+  {id:'sit-1',q:`<div class="q-tag jolt">Scenario 1 — Nothing is going right</div><div class="block block-jolt" contenteditable="true" data-save-key="sit-1-q">"Your day is full. Your second stop took longer than expected so you're already running behind. You text your next client to let them know — no response. You get there and no one answers the door. You try calling your next stop — no answer either. Before you know it it's 3pm, you haven't eaten, and you haven't reached a single client on your list. What do you do?"</div>`,l:`<div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">This is an emotional regulation test — not a logistics test</div><div class="listen-item">Do they spiral, freeze, or complain — or do they stay functional and keep moving?</div><div class="listen-item">Do they think about communicating to the team — or just go quiet?</div><div class="listen-item">Does their energy drop when they describe it — or do they stay grounded?</div></div><div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong</div><div class="listen-item">Stays calm — "this happens, you adjust"</div><div class="listen-item">Loops in their manager or team — doesn't go dark and handle it alone</div><div class="listen-item">Keeps moving — grabs food, retries stops, documents the attempts</div><div class="listen-item">Doesn't catastrophize — treats it as a bad stretch, not a failed day</div></div><div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Watch for</div><div class="listen-item">Gets visibly deflated just describing it — this role will break them</div><div class="listen-item">"I'd just wait and hope they respond" — passive, no initiative</div><div class="listen-item">Focuses entirely on the hunger or the frustration — no problem-solving</div><div class="listen-item">No mention of communicating to the team — works in isolation when things go wrong</div></div><div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"I'd grab something to eat real quick, loop in my manager so they know what's happening, document the attempts on each stop, and try to reroute to any stops I can still hit before end of day. You can't control no-shows — you can control how you respond to them."</div><div class="predict-label a">Average</div><div class="predict-quote a">"I'd keep trying to reach them and just wait it out — hopefully someone picks up eventually"</div><div class="predict-label w">Watch</div><div class="predict-quote w">"Honestly that would be really stressful... I'm not sure what I'd do at that point"</div></div>`,e:`<div class="exit-empty">—</div>`},
+  {id:'sit-2',q:`<div class="q-tag jolt">Scenario 2 — Roof safety</div><div class="block block-jolt" contenteditable="true" data-save-key="sit-2-q">"You're on a roof and something feels unsafe — the surface, the pitch, your footing. What do you do?"</div>`,l:`<div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Do they instinctively prioritize safety — or try to push through?</div><div class="listen-item">Do they know to communicate the issue upward?</div></div><div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong</div><div class="listen-item">Gets down immediately — doesn't take the risk</div><div class="listen-item">Communicates to the team what they found</div><div class="listen-item">Doesn't frame it as failing — frames it as the right call</div></div><div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Watch for</div><div class="listen-item">"I'd try to just finish quickly" — ego over safety</div><div class="listen-item">Doesn't mention telling anyone — works in isolation</div></div>`,e:`<div class="exit-empty">—</div>`},
+  {id:'sit-3',q:`<div class="q-tag ask">Scenario 3 — Confused client</div><div class="block block-ask" contenteditable="true" data-save-key="sit-3-q">"You're picking up a payment and the client starts asking you questions about their invoice that you don't have the answer to. They seem frustrated. What do you do?"</div>`,l:`<div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Do they stay calm — or get defensive?</div><div class="listen-item">Do they know their lane — or try to solve everything?</div></div><div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong</div><div class="listen-item">Stays warm — "I totally understand, let me make sure the right person gets back to you"</div><div class="listen-item">Takes down the concern and follows up — doesn't just leave</div><div class="listen-item">Knows they're a representative of the brand even in small moments</div></div><div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Watch for</div><div class="listen-item">Gets flustered or tries to answer things they don't know</div><div class="listen-item">"I'd just say I don't know" — no follow-through, poor brand representation</div></div>`,e:`<div class="exit-empty">—</div>`},
+  {id:'sit-4',q:`<div class="q-tag ask">Scenario 4 — Unsupervised behavior</div><div class="block block-ask" contenteditable="true" data-save-key="sit-4-q">"If I called your last manager right now and asked what you're like when no one's watching — what would they say?"</div>`,l:`<div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item">Answers without pause — they know who they are</div><div class="listen-item">Includes a self-awareness moment — something still in progress</div><div class="listen-item">Long pause + polished answer = performing</div></div><div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong</div><div class="listen-item">Answers confidently and specifically</div><div class="listen-item">Names one thing they're still working on — real self-awareness</div></div><div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Watch for</div><div class="listen-item">"They'd say I'm basically perfect" — zero self-awareness</div><div class="listen-item">Won't give a reference or deflects</div></div><div class="listen-group predict" style="margin-top:.5rem"><div class="listen-group-title predict">◈ Predict</div><div class="predict-label s">Strong</div><div class="predict-quote s">"They'd say I'm reliable and I figure things out — but probably that I need to communicate more when I'm stuck instead of just pushing through alone."</div><div class="predict-label w">Watch</div><div class="predict-quote w">"Oh they'd say great things, I was always the best on the team"</div></div>`,e:`<div class="exit-empty">—</div>`},
+  {id:'sit-5',q:`<div class="q-tag ask">Scenario 5 — Growth mindset</div><div class="block block-ask" contenteditable="true" data-save-key="sit-5-q">"This role has a clear growth path — people who show initiative here have moved into field, inspection, and sales roles within a year. What would you want to move toward, and why?"</div>`,l:`<div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-group-title observe" style="margin-top:0"></div><div class="listen-item">Do they have a real answer — or is this the first time they're thinking about it?</div><div class="listen-item">Does their direction connect to something real about their personality?</div></div><div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong</div><div class="listen-item">Has a specific direction — "I'd want to get into the field side, I like being hands-on"</div><div class="listen-item">Connects it to something they already know about themselves</div></div><div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Watch for</div><div class="listen-item">"Whatever comes up" — no direction, just going through the motions</div><div class="listen-item">Picks the highest-paying option without any real reasoning</div></div>`,e:`<div class="exit-empty">—</div>`}
 ];
+
+let sitItems=[...DEFAULT_SIT];
+let dragSrcIdx=null;
+
+function renderSit(){
+  const list=document.getElementById('sit-list');
+  if(!list)return;
+  list.innerHTML='';
+  sitItems.forEach((item,idx)=>{
+    const li=document.createElement('li');
+    li.className='rp-item';
+    li.dataset.idx=idx;
+    li.draggable=true;
+    li.innerHTML=`<div class="rp-row"><div class="drag-handle" title="Drag to reorder">⠿</div><div class="rp-qcol">${item.q}<div class="rp-item-controls"><button class="del-btn" onclick="deleteSitItem(${idx})">Delete</button></div></div><div class="rp-listen-col">${item.l}</div><div class="rp-exit-col">${item.e}</div></div>`;
+    li.addEventListener('dragstart',e=>{dragSrcIdx=idx;li.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+    li.addEventListener('dragend',()=>{li.classList.remove('dragging');document.querySelectorAll('#sit-list .rp-item').forEach(i=>i.classList.remove('drag-over'));});
+    li.addEventListener('dragover',e=>{e.preventDefault();document.querySelectorAll('#sit-list .rp-item').forEach(i=>i.classList.remove('drag-over'));li.classList.add('drag-over');});
+    li.addEventListener('drop',e=>{e.preventDefault();li.classList.remove('drag-over');if(dragSrcIdx===null||dragSrcIdx===idx)return;const moved=sitItems.splice(dragSrcIdx,1)[0];sitItems.splice(idx,0,moved);dragSrcIdx=null;renderSit();scheduleSave();});
+    list.appendChild(li);
+  });
+  list.querySelectorAll('[contenteditable="true"][data-save-key]').forEach(el=>{el.addEventListener('input',()=>scheduleSave());});
+  updateNames();
+}
+
+function deleteSitItem(idx){if(!confirm('Delete this question?'))return;sitItems.splice(idx,1);renderSit();scheduleSave();}
+
+function addSitItem(){
+  const id='sit-custom-'+Date.now();
+  sitItems.push({id,q:`<div class="q-tag ask">Custom question</div><div class="block block-ask" contenteditable="true" data-save-key="${id}-q">Type your situational question here...</div>`,l:`<div class="listen-group observe"><div class="listen-group-title observe">◎ Observe</div><div class="listen-item" contenteditable="true">Add observation notes...</div></div><div class="listen-group strong" style="margin-top:.5rem"><div class="listen-group-title strong">✦ Strong</div><div class="listen-item" contenteditable="true">Strong answer looks like...</div></div><div class="listen-group watch" style="margin-top:.5rem"><div class="listen-group-title watch">⚑ Weak</div><div class="listen-item" contenteditable="true">Weak answer looks like...</div></div>`,e:`<div class="exit-empty">—</div>`});
+  renderSit();scheduleSave();
+  setTimeout(()=>{const items=document.querySelectorAll('#sit-list .rp-item');if(items.length)items[items.length-1].scrollIntoView({behavior:'smooth',block:'center'});},100);
+}
+
+function toggleSituational(){
+  situationalOpen=!situationalOpen;
+  const content=document.getElementById('situational-content');
+  const toggle=document.getElementById('situational-toggle');
+  const status=document.getElementById('sit-status');
+  content.style.display=situationalOpen?'block':'none';
+  toggle.classList.toggle('open',situationalOpen);
+  status.textContent=situationalOpen?'On — questions active below':'Off — skip to Pay & Schedule';
+  if(situationalOpen)renderSit();
+  scheduleSave();
+}
+
 function getName(){return document.getElementById('input-candidate').value.trim()||'___';}
 function getRecruiter(){return document.getElementById('input-recruiter').value.trim()||'___';}
 function updateNames(){
   const cn=getName(),rn=getRecruiter();
   document.querySelectorAll('.cn').forEach(el=>{el.textContent=cn;});
   document.querySelectorAll('.rn').forEach(el=>{el.textContent=rn;});
-  const sh=document.getElementById('summary-subhead');
-  if(sh)sh.textContent='Candidate: '+(cn==='___'?'—':cn);
 }
+
 function goTo(idx){
   document.getElementById(sections[current]).classList.remove('visible');
   navItems[current].classList.remove('active');
@@ -444,78 +669,145 @@ function goTo(idx){
   navItems[current].classList.add('active');
   document.getElementById('btn-prev').style.display=current===0?'none':'inline-block';
   const nb=document.getElementById('btn-next');
-  nb.textContent=current===sections.length-1?'Done':current===0?'Begin →':'Next →';
-  if(current===sections.length-1)buildSummary();
+  if(current===sections.length-1){nb.textContent='Done';nb.className='nav-btn';}
+  else{nb.textContent=current===0?'Begin →':'Next →';nb.className='nav-btn primary';}
+  if(current===sections.length-1)refreshScorecard();
   window.scrollTo(0,0);
 }
 function nextSection(){if(current<sections.length-1)goTo(current+1);}
 function prevSection(){if(current>0)goTo(current-1);}
+
+function toggleExit(id){document.getElementById(id).classList.toggle('open');}
+
 function setCheck(btn,key,val){
   const row=btn.closest('.check-row');
   row.querySelectorAll('.check-toggle button').forEach(b=>{b.className='';});
   if(checkState[key]===val){checkState[key]=null;}
   else{checkState[key]=val;btn.className=val;}
-  updateScore();
+  updateScore();scheduleSave();
 }
+
 function updateScore(){
-  const total=checkMap.length;
-  const passed=checkMap.filter(c=>checkState[c.key]==='pass').length;
-  const pct=Math.round((passed/total)*100);
+  const keys=['intro','history','experience','overview','physical','reliability','pay'];
+  const total=keys.length;
+  const passed=keys.filter(k=>checkState[k]==='pass').length;
   document.getElementById('sidebar-score').textContent=passed+' / '+total;
-  document.getElementById('sidebar-fill').style.width=pct+'%';
+  document.getElementById('sidebar-fill').style.width=Math.round((passed/total)*100)+'%';
 }
-function buildSummary(){
-  const cn=getName();
-  const sh=document.getElementById('summary-subhead');
-  if(sh)sh.textContent='Candidate: '+(cn==='___'?'—':cn);
-  const container=document.getElementById('summary-rows');
-  container.innerHTML='';
-  checkMap.forEach(c=>{
+
+function toggleFc(c){
+  if(c.classList.contains('met')){c.classList.remove('met');c.classList.add('fail');}
+  else if(c.classList.contains('fail')){c.classList.remove('fail');}
+  else{c.classList.add('met');}
+  scheduleSave();
+}
+
+function setRating(n){currentRating=n;document.querySelectorAll('.rb').forEach((b,i)=>{b.classList.toggle('sel',i+1===n);});scheduleSave();}
+function setVerdict(v,btn){currentVerdict=v;document.querySelectorAll('.vb').forEach(b=>{b.classList.remove('sel');});btn.classList.add('sel');scheduleSave();}
+
+function refreshScorecard(){
+  const grid=document.getElementById('sc-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  const cells=[{key:'intro',label:'Intro & Rapport'},{key:'history',label:'Work History'},{key:'experience',label:'Prove Experience'},{key:'overview',label:'Company Overview'},{key:'physical',label:'Physical & Safety'},{key:'reliability',label:'Reliability & Trust'},{key:'pay',label:'Pay & Schedule'}];
+  cells.forEach(c=>{
     const val=checkState[c.key];
-    let sc='s-blank',st='—';
-    if(val==='pass'){sc='s-pass';st='Pass';}
-    else if(val==='fail'){sc='s-fail';st='No';}
-    else if(val==='flag'){sc='s-flag';st='Flag';}
-    const row=document.createElement('div');
-    row.className='summary-row';
-    row.innerHTML='<span class="summary-row-label">'+(c.must?'<strong style="color:var(--red)">* </strong>':'')+c.label+'</span><span class="summary-status '+sc+'">'+st+'</span>';
-    container.appendChild(row);
+    let cls='',label='—';
+    if(val==='pass'){cls='cv-p';label='Pass';}else if(val==='fail'){cls='cv-f';label='No';}else if(val==='flag'){cls='cv-g';label='Flag';}
+    const cell=document.createElement('div');cell.className='sc-cell';
+    cell.innerHTML='<div class="sc-cell-label">'+c.label+'</div><div class="sc-cell-val '+cls+'">'+label+'</div>';
+    grid.appendChild(cell);
   });
-  const mustFails=checkMap.filter(c=>c.must&&checkState[c.key]==='fail');
-  const passed=checkMap.filter(c=>checkState[c.key]==='pass').length;
-  const pct=Math.round((passed/checkMap.length)*100);
-  const banner=document.getElementById('verdict-banner');
-  banner.style.display='block';
-  if(mustFails.length>0){banner.className='verdict-banner verdict-pass';banner.textContent='Do not advance — missing must-have: '+mustFails.map(c=>c.label).join(', ');}
-  else if(pct>=70){banner.className='verdict-banner verdict-strong';banner.textContent='Strong candidate — recommend advancing ('+pct+'% criteria met)';}
-  else if(pct>=45){banner.className='verdict-banner verdict-maybe';banner.textContent='Maybe — needs more vetting ('+pct+'% met)';}
-  else{banner.className='verdict-banner verdict-pass';banner.textContent='Not recommended — low criteria match ('+pct+'% met)';}
+  const passes=cells.filter(c=>checkState[c.key]==='pass').length;
+  const pct=Math.round((passes/cells.length)*100);
+  const sig=document.getElementById('signal-box');
+  if(!sig)return;
+  if(passes===0){sig.textContent='Score sections as you go — your recommendation will appear here.';sig.style.color='var(--ink3)';return;}
+  if(pct>=75){sig.textContent='✦ Strong Pass — Move to next step. Initiative proven, reliable, physical requirements met.';sig.style.color='var(--green)';}
+  else if(pct>=55){sig.textContent='→ Good Pass — Worth advancing. A few soft spots but overall solid.';sig.style.color='var(--blue)';}
+  else if(pct>=35){sig.textContent='⏸ Conditional — Needs a follow-up call before committing.';sig.style.color='var(--amber)';}
+  else{sig.textContent='✕ Decline — Too many weak signals or failed a must-have.';sig.style.color='var(--red)';}
 }
-function toggleExit(id){document.getElementById(id).classList.toggle('open');}
+
+/* SAVE */
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>doSave(),400);}
+
+function doSave(){
+  const data={};
+  ['input-recruiter','input-candidate','input-date','input-source','n-name','n-date','n-role','n-income-past','n-income-goal','n-behavioral','n-extra'].forEach(id=>{const el=document.getElementById(id);if(el)data[id]=el.value;});
+  const mot=document.getElementById('n-motivation');if(mot)data['n-motivation']=mot.value;
+  document.querySelectorAll('[data-save-key]').forEach(el=>{
+    if(el.closest('#sit-list'))return;
+    if(el.tagName==='TEXTAREA')data[el.dataset.saveKey]=el.value;
+    else if(el.tagName!=='INPUT'&&el.tagName!=='SELECT')data[el.dataset.saveKey]=el.innerHTML;
+  });
+  /* sit items */
+  const sitData=sitItems.map((item,idx)=>{
+    const lis=document.querySelectorAll('#sit-list .rp-item');
+    const li=lis[idx];
+    if(!li)return item;
+    return{id:item.id,q:li.querySelector('.rp-qcol')?.innerHTML.replace(/<div class="rp-item-controls">[\s\S]*?<\/div>/,'')||item.q,l:li.querySelector('.rp-listen-col')?.innerHTML||item.l,e:li.querySelector('.rp-exit-col')?.innerHTML||item.e};
+  });
+  data['__sit']=JSON.stringify(sitData);
+  data['__sit_open']=situationalOpen?'1':'0';
+  data['__checks']=JSON.stringify(checkState);
+  const fcS={};document.querySelectorAll('.fc').forEach(c=>{if(c.dataset.saveKey)fcS[c.dataset.saveKey]=c.classList.contains('met')?'met':c.classList.contains('fail')?'fail':'';});
+  data['__fc']=JSON.stringify(fcS);
+  data['__rating']=currentRating;
+  data['__verdict']=currentVerdict;
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}catch(e){}
+  const ind=document.getElementById('save-indicator');
+  if(ind){ind.textContent='Saved ✓';ind.className='save-indicator saved';setTimeout(()=>{ind.textContent='All edits save automatically to your browser';ind.className='save-indicator';},1500);}
+}
+
+function doLoad(){
+  let data;try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;data=JSON.parse(raw);}catch(e){return false;}
+  ['input-recruiter','input-candidate','input-date','input-source','n-name','n-date','n-role','n-income-past','n-income-goal','n-behavioral','n-extra'].forEach(id=>{const el=document.getElementById(id);if(el&&data[id]!==undefined)el.value=data[id];});
+  const mot=document.getElementById('n-motivation');if(mot&&data['n-motivation'])mot.value=data['n-motivation'];
+  document.querySelectorAll('[data-save-key]').forEach(el=>{
+    if(el.closest('#sit-list'))return;
+    if(el.tagName==='TEXTAREA'){if(data[el.dataset.saveKey]!==undefined){el.value=data[el.dataset.saveKey];autoResize(el);}}
+    else if(el.tagName!=='INPUT'&&el.tagName!=='SELECT'){if(data[el.dataset.saveKey]!==undefined)el.innerHTML=data[el.dataset.saveKey];}
+  });
+  if(data['__sit']){try{const s=JSON.parse(data['__sit']);if(Array.isArray(s)&&s.length>0)sitItems=s;}catch(e){}}
+  if(data['__sit_open']==='1'){situationalOpen=true;const content=document.getElementById('situational-content');const toggle=document.getElementById('situational-toggle');const status=document.getElementById('sit-status');if(content)content.style.display='block';if(toggle)toggle.classList.add('open');if(status)status.textContent='On — questions active below';renderSit();}
+  if(data['__checks']){try{Object.assign(checkState,JSON.parse(data['__checks']));}catch(e){}}
+  if(data['__fc']){try{const fc=JSON.parse(data['__fc']);document.querySelectorAll('.fc').forEach(c=>{if(c.dataset.saveKey&&fc[c.dataset.saveKey]){c.classList.toggle('met',fc[c.dataset.saveKey]==='met');c.classList.toggle('fail',fc[c.dataset.saveKey]==='fail');}});}catch(e){}}
+  if(data['__rating']){currentRating=parseInt(data['__rating']);document.querySelectorAll('.rb').forEach((b,i)=>{b.classList.toggle('sel',i+1===currentRating);});}
+  if(data['__verdict']){currentVerdict=data['__verdict'];document.querySelectorAll('.vb').forEach(b=>{b.classList.toggle('sel',b.textContent.trim().includes(currentVerdict));});}
+  document.querySelectorAll('.check-row').forEach(row=>{
+    const btns=row.querySelectorAll('.check-toggle button');
+    btns.forEach(btn=>{
+      const oc=btn.getAttribute('onclick')||'';const match=oc.match(/'([^']+)'/g);
+      if(match&&match.length>=2){const key=match[0].replace(/'/g,'');const val=match[1].replace(/'/g,'');if(checkState[key]===val)btn.className=val;}
+    });
+  });
+  return true;
+}
+
+function generateSummary(){
+  const r=getRecruiter(),c=getName()||document.getElementById('n-name').value||'—';
+  const date=document.getElementById('input-date').value||document.getElementById('n-date').value||new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const cells=[{key:'intro',label:'Intro & Rapport'},{key:'history',label:'Work History'},{key:'experience',label:'Prove Experience'},{key:'overview',label:'Company Overview'},{key:'physical',label:'Physical & Safety'},{key:'reliability',label:'Reliability & Trust'},{key:'pay',label:'Pay & Schedule'}];
+  let scoreLines='';cells.forEach(ce=>{const v=checkState[ce.key];scoreLines+='  '+ce.label+': '+(v==='pass'?'Pass':v==='fail'?'No':v==='flag'?'Flag':'—')+'\n';});
+  const fcMet=[],fcFail=[];document.querySelectorAll('.fc').forEach(x=>{if(x.classList.contains('met'))fcMet.push(x.textContent);else if(x.classList.contains('fail'))fcFail.push(x.textContent);});
+  let out='FIELD ASSISTANT RUNNER — CANDIDATE SUMMARY\n'+'━'.repeat(46)+'\n\n';
+  out+='Interviewer: '+r+'\nCandidate: '+c+'\nDate: '+date+'\nSource: '+(document.getElementById('input-source').value||'—')+'\n\n';
+  out+='BACKGROUND\nCurrent Role: '+(document.getElementById('n-role').value||'—')+'\nMotivation: '+(document.getElementById('n-motivation').value||'—')+'\nCurrent Earnings: '+(document.getElementById('n-income-past').value||'—')+'\nIncome Goal: '+(document.getElementById('n-income-goal').value||'—')+'\n\n';
+  out+='SECTION SCORES\n'+scoreLines+'\n';
+  if(fcMet.length)out+='CRITERIA MET\n'+fcMet.map(x=>'  ✓ '+x).join('\n')+'\n\n';
+  if(fcFail.length)out+='CRITERIA NOT MET\n'+fcFail.map(x=>'  ✕ '+x).join('\n')+'\n\n';
+  out+='NOTES\n'+(document.getElementById('n-behavioral').value||'—')+'\n\nRED FLAGS\n'+(document.getElementById('n-extra').value||'—')+'\n\n';
+  out+='━'.repeat(46)+'\nEXCITEMENT: '+(currentRating?currentRating+'/10':'—')+'  |  VERDICT: '+(currentVerdict||'—');
+  const box=document.getElementById('summ-box');box.textContent=out;box.style.display='block';
+  document.getElementById('copy-btn').style.display='inline-block';
+}
+function copySummary(){navigator.clipboard.writeText(document.getElementById('summ-box').textContent).then(()=>{const btn=document.getElementById('copy-btn');btn.textContent='Copied!';setTimeout(()=>{btn.textContent='Copy to clipboard';},2000);});}
 function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
-function copySummary(){
-  const cn=getName(),rn=getRecruiter();
-  const date=document.getElementById('input-date').value.trim();
-  const lines=['FIELD ASSISTANT RUNNER — INTERVIEW SUMMARY',''];
-  if(cn!=='___')lines.push('Candidate: '+cn);
-  if(rn!=='___')lines.push('Recruiter: '+rn);
-  if(date)lines.push('Date: '+date);
-  lines.push('','CRITERIA (* = must-have)','');
-  checkMap.forEach(c=>{
-    const val=checkState[c.key];
-    const sym=val==='pass'?'[PASS]':val==='fail'?'[NO]  ':val==='flag'?'[FLAG]':'[ —  ]';
-    lines.push(sym+'  '+(c.must?'* ':'  ')+c.label);
-  });
-  const noteLines=[];
-  document.querySelectorAll('[data-key]').forEach(el=>{if(el.value.trim())noteLines.push('  '+el.dataset.key+': '+el.value.trim());});
-  if(noteLines.length){lines.push('','NOTES BY QUESTION');noteLines.forEach(n=>lines.push(n));}
-  const overall=document.getElementById('overall-notes').value.trim();
-  if(overall){lines.push('','OVERALL IMPRESSION','  '+overall);}
-  navigator.clipboard.writeText(lines.join('\n')).catch(()=>{});
-  const btn=document.querySelector('.copy-btn');
-  btn.textContent='Copied!';
-  setTimeout(()=>{btn.textContent='Copy full summary ↗';},2000);
-}
+
+/* INIT */
+doLoad();updateNames();updateScore();goTo(0);
+document.querySelectorAll('[contenteditable="true"][data-save-key]').forEach(el=>{el.addEventListener('input',()=>scheduleSave());});
 </script>
 </body>
 </html>
